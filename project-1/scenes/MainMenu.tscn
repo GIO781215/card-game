@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b1mainmenu01"]
+[gd_scene format=3 uid="uid://b1mainmenu01"]
 
-[ext_resource type="Script" path="res://scripts/MainMenu.gd" id="1_mainmenu"]
+[ext_resource type="Script" uid="uid://ncx164w5l5ck" path="res://scripts/MainMenu.gd" id="1_mainmenu"]
+[ext_resource type="Texture2D" path="res://assets/images/background.png" id="2_bg"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -18,7 +19,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.2, 1)
+color = Color(1, 1, 1, 1)
+
+[node name="BgImage" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -30,37 +42,44 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(320, 0)
-theme_override_constants/separation = 20
+custom_minimum_size = Vector2(340, 0)
+theme_override_constants/separation = 24
 
 [node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-text = "卡牌遊戲"
+text = "嘉洛特牌卡"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 52
+theme_override_font_sizes/font_size = 68
 
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 40)
 
-[node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="CardQueryButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(320, 72)
-text = "進入遊戲"
-theme_override_font_sizes/font_size = 26
+custom_minimum_size = Vector2(340, 80)
+text = "牌卡查詢"
+theme_override_font_sizes/font_size = 28
+
+[node name="PsychTestButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(340, 80)
+text = "心理評測"
+theme_override_font_sizes/font_size = 28
 
 [node name="SettingsButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(320, 72)
-text = "設定"
-theme_override_font_sizes/font_size = 26
+custom_minimum_size = Vector2(340, 80)
+text = "系統設定"
+theme_override_font_sizes/font_size = 28
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(320, 72)
-text = "退出"
-theme_override_font_sizes/font_size = 26
+custom_minimum_size = Vector2(340, 80)
+text = "退出程序"
+theme_override_font_sizes/font_size = 28
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/PlayButton" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/CardQueryButton" to="." method="_on_card_query_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/PsychTestButton" to="." method="_on_psych_test_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/SettingsButton" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/QuitButton" to="." method="_on_quit_pressed"]

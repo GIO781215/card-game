@@ -1,37 +1,50 @@
 extends Control
 
-const COLORS: Array = [
-	Color(0.1, 0.1, 0.2, 1),   # 深藍（預設）
-	Color(0.05, 0.2, 0.08, 1),  # 深綠
-	Color(0.2, 0.05, 0.05, 1),  # 深紅
-	Color(0.15, 0.05, 0.25, 1), # 深紫
-	Color(0.05, 0.15, 0.25, 1), # 深青
-]
-
-const COLOR_NAMES: Array = ["深藍", "深綠", "深紅", "深紫", "深青"]
-
-var _color_index: int = 0
-
 func _ready() -> void:
-	_find_current_color()
-	$Background.color = GameState.background_color
-	_update_button_label()
+	GameState.apply_background($BgImage)
+	_update_bg_button()
+	_update_scale_buttons()
+	_update_label_colors()
 
-func _find_current_color() -> void:
-	for i in COLORS.size():
-		if COLORS[i].is_equal_approx(GameState.background_color):
-			_color_index = i
-			return
+func _update_bg_button() -> void:
+	%BgToggle.text = "關閉背景" if GameState.background_enabled else "開啟背景"
 
-func _update_button_label() -> void:
-	var next_index := (_color_index + 1) % COLORS.size()
-	$CenterContainer/VBoxContainer/ChangeBgButton.text = "更改背景顏色 → " + COLOR_NAMES[next_index]
+func _update_label_colors() -> void:
+	GameState.apply_label_color($CenterContainer/VBoxContainer/Title)
+	GameState.apply_label_color($CenterContainer/VBoxContainer/ScaleLabel)
+	GameState.apply_label_color($CenterContainer/VBoxContainer/BgLabel)
 
-func _on_change_bg_pressed() -> void:
-	_color_index = (_color_index + 1) % COLORS.size()
-	GameState.background_color = COLORS[_color_index]
-	$Background.color = GameState.background_color
-	_update_button_label()
+func _update_scale_buttons() -> void:
+	%SmallButton.modulate  = Color(1, 1, 0) if GameState.ui_scale_level == 0 else Color.WHITE
+	%MediumButton.modulate = Color(1, 1, 0) if GameState.ui_scale_level == 1 else Color.WHITE
+	%LargeButton.modulate  = Color(1, 1, 0) if GameState.ui_scale_level == 2 else Color.WHITE
+	%XLargeButton.modulate = Color(1, 1, 0) if GameState.ui_scale_level == 3 else Color.WHITE
+
+func _on_scale_small_pressed() -> void:
+	GameState.ui_scale_level = 0
+	GameState.apply_ui_scale()
+	_update_scale_buttons()
+
+func _on_scale_medium_pressed() -> void:
+	GameState.ui_scale_level = 1
+	GameState.apply_ui_scale()
+	_update_scale_buttons()
+
+func _on_scale_large_pressed() -> void:
+	GameState.ui_scale_level = 2
+	GameState.apply_ui_scale()
+	_update_scale_buttons()
+
+func _on_scale_xlarge_pressed() -> void:
+	GameState.ui_scale_level = 3
+	GameState.apply_ui_scale()
+	_update_scale_buttons()
+
+func _on_bg_toggle_pressed() -> void:
+	GameState.background_enabled = !GameState.background_enabled
+	$BgImage.visible = GameState.background_enabled
+	_update_bg_button()
+	_update_label_colors()
 
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")

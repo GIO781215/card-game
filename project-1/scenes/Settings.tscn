@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b1settings01"]
+[gd_scene format=3 uid="uid://b1settings01"]
 
 [ext_resource type="Script" path="res://scripts/Settings.gd" id="1_settings"]
+[ext_resource type="Texture2D" path="res://assets/images/background.png" id="2_bg"]
 
 [node name="Settings" type="Control"]
 layout_mode = 3
@@ -18,7 +19,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.2, 1)
+color = Color(1, 1, 1, 1)
+
+[node name="BgImage" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -35,25 +47,86 @@ theme_override_constants/separation = 20
 
 [node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-text = "設定"
+text = "系統設定"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 52
 
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 20)
 
-[node name="ChangeBgButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="ScaleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "畫面大小"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
+
+[node name="ScaleContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SmallButton" type="Button" parent="CenterContainer/VBoxContainer/ScaleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 72)
+text = "小"
+theme_override_font_sizes/font_size = 22
+
+[node name="MediumButton" type="Button" parent="CenterContainer/VBoxContainer/ScaleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 72)
+text = "中"
+theme_override_font_sizes/font_size = 22
+
+[node name="LargeButton" type="Button" parent="CenterContainer/VBoxContainer/ScaleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 72)
+text = "大"
+theme_override_font_sizes/font_size = 22
+
+[node name="XLargeButton" type="Button" parent="CenterContainer/VBoxContainer/ScaleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 72)
+text = "很大"
+theme_override_font_sizes/font_size = 22
+
+[node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 10)
+
+[node name="BgLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "背景圖片"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
+
+[node name="BgToggle" type="Button" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(340, 72)
-text = "更改背景顏色"
-theme_override_font_sizes/font_size = 22
+text = "開啟背景"
+theme_override_font_sizes/font_size = 24
+
+[node name="Spacer3" type="Control" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 10)
 
 [node name="BackButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(340, 72)
+custom_minimum_size = Vector2(340, 80)
 text = "返回主選單"
 theme_override_font_sizes/font_size = 26
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ChangeBgButton" to="." method="_on_change_bg_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScaleContainer/SmallButton" to="." method="_on_scale_small_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScaleContainer/MediumButton" to="." method="_on_scale_medium_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScaleContainer/LargeButton" to="." method="_on_scale_large_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScaleContainer/XLargeButton" to="." method="_on_scale_xlarge_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/BgToggle" to="." method="_on_bg_toggle_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]
