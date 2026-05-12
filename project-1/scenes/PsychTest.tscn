@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://psychtest001"]
 
-[ext_resource type="Script" path="res://scripts/PsychTest.gd" id="1_psychtest"]
-[ext_resource type="Texture2D" path="res://assets/images/background.png" id="2_bg"]
+[ext_resource type="Script" uid="uid://2ojk20047agl" path="res://scripts/PsychTest.gd" id="1_psychtest"]
+[ext_resource type="Texture2D" uid="uid://bl2uk3ov2b6m7" path="res://assets/images/background.png" id="2_bg"]
 
-[node name="PsychTest" type="Control"]
+[node name="PsychTest" type="Control" unique_id=1289792434]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,16 +12,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_psychtest")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=2058648668]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(1, 1, 1, 1)
 
-[node name="BgImage" type="TextureRect" parent="."]
+[node name="BgImage" type="TextureRect" parent="." unique_id=1799434227]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,37 +31,37 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2079568326]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 60
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 60
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=393408177]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer" unique_id=392705430]
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "心理評測"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 48
 
-[node name="Content" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
+[node name="Content" type="CenterContainer" parent="MarginContainer/VBoxContainer" unique_id=507696075]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1741488411]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-custom_minimum_size = Vector2(0, 80)
 size_flags_horizontal = 3
-text = "返回主選單"
 theme_override_font_sizes/font_size = 26
+text = "返回主選單"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]

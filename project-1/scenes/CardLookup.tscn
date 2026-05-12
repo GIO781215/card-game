@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://cardlookup001"]
 
-[ext_resource type="Script" path="res://scripts/CardLookup.gd" id="1_cardlookup"]
-[ext_resource type="Texture2D" path="res://assets/images/background.png" id="2_bg"]
+[ext_resource type="Script" uid="uid://dqs5junt7pirl" path="res://scripts/CardLookup.gd" id="1_cardlookup"]
+[ext_resource type="Texture2D" uid="uid://bl2uk3ov2b6m7" path="res://assets/images/background.png" id="2_bg"]
 
-[node name="CardLookup" type="Control"]
+[node name="CardLookup" type="Control" unique_id=336450000]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,16 +12,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cardlookup")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=834611607]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(1, 1, 1, 1)
 
-[node name="BgImage" type="TextureRect" parent="."]
+[node name="BgImage" type="TextureRect" parent="." unique_id=184078430]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,37 +31,362 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1201507735]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 60
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 60
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=409384180]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer" unique_id=125086366]
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "牌卡查詢"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 48
 
-[node name="Content" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=625687180]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1038361483]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/PanelContainer" unique_id=703288161]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 80)
+horizontal_scroll_mode = 3
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/PanelContainer/ScrollContainer" unique_id=1445433546]
+unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
-text = "返回主選單"
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1971892189]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 26
+text = "返回主選單"
+
+[node name="OptionsOverlay" type="Control" parent="." unique_id=1336455589]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimBg" type="ColorRect" parent="OptionsOverlay" unique_id=1044516587]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="OptionsPanel" type="Panel" parent="OptionsOverlay" unique_id=623484491]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.15
+anchor_top = 0.22
+anchor_right = 0.85
+anchor_bottom = 0.62
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="OptionsMargin" type="MarginContainer" parent="OptionsOverlay/OptionsPanel" unique_id=506652619]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="OptionsVBox" type="VBoxContainer" parent="OptionsOverlay/OptionsPanel/OptionsMargin" unique_id=525810822]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="RenameBtn" type="Button" parent="OptionsOverlay/OptionsPanel/OptionsMargin/OptionsVBox" unique_id=318284219]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "修改名稱"
+
+[node name="DeleteBtn" type="Button" parent="OptionsOverlay/OptionsPanel/OptionsMargin/OptionsVBox" unique_id=1507240880]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "刪除"
+
+[node name="MoveBtn" type="Button" parent="OptionsOverlay/OptionsPanel/OptionsMargin/OptionsVBox"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "移動位置"
+
+[node name="OptionsCancelBtn" type="Button" parent="OptionsOverlay/OptionsPanel/OptionsMargin/OptionsVBox" unique_id=2069332588]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "取消"
+
+[node name="RenameOverlay" type="Control" parent="." unique_id=1732787004]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimBg" type="ColorRect" parent="RenameOverlay" unique_id=1181363799]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="RenamePanel" type="Panel" parent="RenameOverlay" unique_id=1299012534]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.3
+anchor_right = 0.95
+anchor_bottom = 0.62
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RenameMargin" type="MarginContainer" parent="RenameOverlay/RenamePanel" unique_id=456054594]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="RenameVBox" type="VBoxContainer" parent="RenameOverlay/RenamePanel/RenameMargin" unique_id=842812539]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RenameLabel" type="Label" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox" unique_id=1196934930]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "輸入名稱"
+horizontal_alignment = 1
+
+[node name="RenameInput" type="LineEdit" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox" unique_id=400157991]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+
+[node name="RenameHBox" type="HBoxContainer" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox" unique_id=2050803681]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ConfirmRenameBtn" type="Button" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox" unique_id=1055898309]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "確定"
+
+[node name="CancelRenameBtn" type="Button" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox" unique_id=1495852391]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "取消"
+
+[node name="DeleteOverlay" type="Control" parent="." unique_id=926056432]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimBg" type="ColorRect" parent="DeleteOverlay" unique_id=602229313]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="DeletePanel" type="Panel" parent="DeleteOverlay" unique_id=1609260277]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.35
+anchor_right = 0.95
+anchor_bottom = 0.6
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DeleteMargin" type="MarginContainer" parent="DeleteOverlay/DeletePanel" unique_id=1861637835]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="DeleteVBox" type="VBoxContainer" parent="DeleteOverlay/DeletePanel/DeleteMargin" unique_id=2028717984]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="DeleteLabel" type="Label" parent="DeleteOverlay/DeletePanel/DeleteMargin/DeleteVBox" unique_id=396015801]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "確定要刪除這個人嗎？"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="DeleteHBox" type="HBoxContainer" parent="DeleteOverlay/DeletePanel/DeleteMargin/DeleteVBox" unique_id=763653358]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ConfirmDeleteBtn" type="Button" parent="DeleteOverlay/DeletePanel/DeleteMargin/DeleteVBox/DeleteHBox" unique_id=321454941]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "確定刪除"
+
+[node name="CancelDeleteBtn" type="Button" parent="DeleteOverlay/DeletePanel/DeleteMargin/DeleteVBox/DeleteHBox" unique_id=2013073397]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "取消"
+
+[node name="MoveOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+z_index = 10
+
+[node name="DimBg" type="ColorRect" parent="MoveOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="MovePanel" type="Panel" parent="MoveOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.3
+anchor_right = 0.95
+anchor_bottom = 0.62
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MoveMargin" type="MarginContainer" parent="MoveOverlay/MovePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="MoveVBox" type="VBoxContainer" parent="MoveOverlay/MovePanel/MoveMargin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="MoveLabel" type="Label" parent="MoveOverlay/MovePanel/MoveMargin/MoveVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "移動到第幾號位置？"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+
+[node name="MoveInput" type="LineEdit" parent="MoveOverlay/MovePanel/MoveMargin/MoveVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 22
+virtual_keyboard_type = 2
+
+[node name="MoveHBox" type="HBoxContainer" parent="MoveOverlay/MovePanel/MoveMargin/MoveVBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ConfirmMoveBtn" type="Button" parent="MoveOverlay/MovePanel/MoveMargin/MoveVBox/MoveHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 60)
+text = "確定"
+theme_override_font_sizes/font_size = 22
+
+[node name="CancelMoveBtn" type="Button" parent="MoveOverlay/MovePanel/MoveMargin/MoveVBox/MoveHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 60)
+text = "取消"
+theme_override_font_sizes/font_size = 22
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="OptionsOverlay/OptionsPanel/OptionsMargin/OptionsVBox/RenameBtn" to="." method="_on_rename_btn_pressed"]
+[connection signal="pressed" from="OptionsOverlay/OptionsPanel/OptionsMargin/OptionsVBox/DeleteBtn" to="." method="_on_delete_btn_pressed"]
+[connection signal="pressed" from="OptionsOverlay/OptionsPanel/OptionsMargin/OptionsVBox/MoveBtn" to="." method="_on_move_btn_pressed"]
+[connection signal="pressed" from="OptionsOverlay/OptionsPanel/OptionsMargin/OptionsVBox/OptionsCancelBtn" to="." method="_on_options_cancel_pressed"]
+[connection signal="pressed" from="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox/ConfirmRenameBtn" to="." method="_on_confirm_rename_pressed"]
+[connection signal="pressed" from="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox/CancelRenameBtn" to="." method="_on_cancel_rename_pressed"]
+[connection signal="pressed" from="DeleteOverlay/DeletePanel/DeleteMargin/DeleteVBox/DeleteHBox/ConfirmDeleteBtn" to="." method="_on_confirm_delete_pressed"]
+[connection signal="pressed" from="DeleteOverlay/DeletePanel/DeleteMargin/DeleteVBox/DeleteHBox/CancelDeleteBtn" to="." method="_on_cancel_delete_pressed"]
+[connection signal="pressed" from="MoveOverlay/MovePanel/MoveMargin/MoveVBox/MoveHBox/ConfirmMoveBtn" to="." method="_on_confirm_move_pressed"]
+[connection signal="pressed" from="MoveOverlay/MovePanel/MoveMargin/MoveVBox/MoveHBox/CancelMoveBtn" to="." method="_on_cancel_move_pressed"]

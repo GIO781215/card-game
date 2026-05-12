@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://b1settings01"]
 
-[ext_resource type="Script" path="res://scripts/Settings.gd" id="1_settings"]
-[ext_resource type="Texture2D" path="res://assets/images/background.png" id="2_bg"]
+[ext_resource type="Script" uid="uid://cpbn8l0wvlaki" path="res://scripts/Settings.gd" id="1_settings"]
+[ext_resource type="Texture2D" uid="uid://bl2uk3ov2b6m7" path="res://assets/images/background.png" id="2_bg"]
 
-[node name="Settings" type="Control"]
+[node name="Settings" type="Control" unique_id=82004479]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,16 +12,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_settings")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1918705324]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(1, 1, 1, 1)
 
-[node name="BgImage" type="TextureRect" parent="."]
+[node name="BgImage" type="TextureRect" parent="." unique_id=1920191843]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,101 +31,106 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1201507736]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=381422967]
 layout_mode = 2
-custom_minimum_size = Vector2(340, 0)
-theme_override_constants/separation = 20
+theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1599888396]
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "系統設定"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 52
 
-[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1152907599]
 custom_minimum_size = Vector2(0, 20)
-
-[node name="ScaleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+
+[node name="ScaleLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=234125636]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "畫面大小"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 24
 
-[node name="ScaleContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+[node name="ScaleContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=548155203]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SmallButton" type="Button" parent="CenterContainer/VBoxContainer/ScaleContainer"]
+[node name="SmallButton" type="Button" parent="MarginContainer/VBoxContainer/ScaleContainer" unique_id=742255297]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 72)
+theme_override_font_sizes/font_size = 22
 text = "小"
-theme_override_font_sizes/font_size = 22
 
-[node name="MediumButton" type="Button" parent="CenterContainer/VBoxContainer/ScaleContainer"]
+[node name="MediumButton" type="Button" parent="MarginContainer/VBoxContainer/ScaleContainer" unique_id=602070700]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 72)
+theme_override_font_sizes/font_size = 22
 text = "中"
-theme_override_font_sizes/font_size = 22
 
-[node name="LargeButton" type="Button" parent="CenterContainer/VBoxContainer/ScaleContainer"]
+[node name="LargeButton" type="Button" parent="MarginContainer/VBoxContainer/ScaleContainer" unique_id=2120242421]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 72)
+theme_override_font_sizes/font_size = 22
 text = "大"
-theme_override_font_sizes/font_size = 22
 
-[node name="XLargeButton" type="Button" parent="CenterContainer/VBoxContainer/ScaleContainer"]
+[node name="XLargeButton" type="Button" parent="MarginContainer/VBoxContainer/ScaleContainer" unique_id=993552069]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 72)
-text = "很大"
 theme_override_font_sizes/font_size = 22
+text = "很大"
 
-[node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
+[node name="Spacer2" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1196822592]
 custom_minimum_size = Vector2(0, 10)
-
-[node name="BgLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+
+[node name="BgLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=687461214]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "背景圖片"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 24
 
-[node name="BgToggle" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="BgToggle" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1054145317]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
-custom_minimum_size = Vector2(340, 72)
-text = "開啟背景"
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
+text = "開啟背景"
 
-[node name="Spacer3" type="Control" parent="CenterContainer/VBoxContainer"]
+[node name="Spacer3" type="Control" parent="MarginContainer/VBoxContainer" unique_id=239248791]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 10)
+size_flags_vertical = 3
 
-[node name="BackButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1778834691]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-custom_minimum_size = Vector2(340, 80)
-text = "返回主選單"
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 26
+text = "返回主選單"
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScaleContainer/SmallButton" to="." method="_on_scale_small_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScaleContainer/MediumButton" to="." method="_on_scale_medium_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScaleContainer/LargeButton" to="." method="_on_scale_large_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScaleContainer/XLargeButton" to="." method="_on_scale_xlarge_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/BgToggle" to="." method="_on_bg_toggle_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/SmallButton" to="." method="_on_scale_small_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/MediumButton" to="." method="_on_scale_medium_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/LargeButton" to="." method="_on_scale_large_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/XLargeButton" to="." method="_on_scale_xlarge_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/BgToggle" to="." method="_on_bg_toggle_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]
