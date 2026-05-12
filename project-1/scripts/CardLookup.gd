@@ -5,6 +5,7 @@ var _touch_start_y: float = 0.0
 var _scroll_start: int = 0
 var _long_press_index: int = -1
 var _is_long_press: bool = false
+var _is_dragging: bool = false
 
 func _ready() -> void:
 	GameState.apply_background($BgImage)
@@ -29,6 +30,7 @@ func _rebuild_grid() -> void:
 		btn.text = GameState.person_list[i]["name"]
 		btn.custom_minimum_size = Vector2(0, 90)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.clip_text = true
 		btn.add_theme_font_size_override("font_size", 20)
 		var idx := i
 		btn.pressed.connect(func(): _on_person_pressed(idx))
@@ -69,7 +71,7 @@ func _on_long_press_timeout() -> void:
 	%OptionsOverlay.visible = true
 
 func _on_person_pressed(idx: int) -> void:
-	if _is_long_press:
+	if _is_long_press or _is_dragging:
 		_is_long_press = false
 		return
 	GameState.current_person_index = idx
@@ -136,13 +138,24 @@ func _on_confirm_delete_pressed() -> void:
 func _on_cancel_delete_pressed() -> void:
 	%DeleteOverlay.visible = false
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	var sc: ScrollContainer = $MarginContainer/VBoxContainer/PanelContainer/ScrollContainer
-	if event is InputEventScreenTouch and event.pressed:
-		_touch_start_y = event.position.y
-		_scroll_start = sc.scroll_vertical
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			_touch_start_y = event.position.y
+			_scroll_start = sc.scroll_vertical
+			_is_dragging = false
+		else:
+			if _is_dragging:
+				get_viewport().set_input_as_handled()
 	elif event is InputEventScreenDrag:
-		sc.scroll_vertical = _scroll_start + int(_touch_start_y - event.position.y)
+		var dist := absf(event.position.y - _touch_start_y)
+		if dist > 8.0:
+			_is_dragging = true
+		if _is_dragging:
+			sc.scroll_vertical = _scroll_start + int(_touch_start_y - event.position.y)
+			_long_press_timer.stop()
+			get_viewport().set_input_as_handled()
 
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")

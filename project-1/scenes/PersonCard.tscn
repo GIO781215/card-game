@@ -45,8 +45,8 @@ theme_override_constants/separation = 0
 [node name="ScrollContainer" type="ScrollContainer" parent="MainVBox" unique_id=1131599619]
 layout_mode = 2
 size_flags_vertical = 3
-vertical_scroll_mode = 3
 horizontal_scroll_mode = 3
+vertical_scroll_mode = 3
 
 [node name="ContentVBox" type="VBoxContainer" parent="MainVBox/ScrollContainer" unique_id=1395750544]
 layout_mode = 2
@@ -68,7 +68,7 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="NameRow" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox" unique_id=300001]
-custom_minimum_size = Vector2(0, 76)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_override_constants/separation = 12
 
@@ -79,52 +79,92 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 44
 vertical_alignment = 1
+text_overrun_behavior = 3
+mouse_filter = 0
 
 [node name="GenderToggleBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/NameRow" unique_id=300002]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 48)
+custom_minimum_size = Vector2(88, 30)
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 18
 text = "♂ 男"
 
 [node name="SolarRow" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox" unique_id=491812259]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 4
 
 [node name="SolarTitle" type="Label" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=635420876]
 custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_font_sizes/font_size = 20
 text = "國曆生日"
+vertical_alignment = 1
 
-[node name="SolarBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=1179674658]
+[node name="SolarYearBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=500001]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "請輸入"
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "2000 年"
+
+[node name="SolarMonthBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=500002]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "1 月"
+
+[node name="SolarDayBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=500003]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "1 日"
 
 [node name="LunarRow" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox" unique_id=864531038]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 4
 
 [node name="LunarTitle" type="Label" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=213066587]
 custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_font_sizes/font_size = 20
 text = "農曆生日"
+vertical_alignment = 1
 
-[node name="LunarBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=1775954247]
+[node name="LunarYearBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=500004]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "請輸入"
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "2000 年"
+
+[node name="LunarMonthBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=500005]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "1 月"
+
+[node name="LunarDayBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=500006]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "1 日"
 
 [node name="CardsDividerMargin" type="MarginContainer" parent="MainVBox/ScrollContainer/ContentVBox" unique_id=1470875393]
 layout_mode = 2
@@ -326,17 +366,84 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.5)
 
-[node name="BirthdayPanel" type="Panel" parent="BirthdayOverlay" unique_id=535694477]
+[node name="PickerPanel" type="Panel" parent="BirthdayOverlay" unique_id=535694477]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.05
-anchor_top = 0.32
+anchor_top = 0.25
+anchor_right = 0.95
+anchor_bottom = 0.72
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PickerMargin" type="MarginContainer" parent="BirthdayOverlay/PickerPanel" unique_id=286989918]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="PickerVBox" type="VBoxContainer" parent="BirthdayOverlay/PickerPanel/PickerMargin" unique_id=948048242]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PickerScroll" type="ScrollContainer" parent="BirthdayOverlay/PickerPanel/PickerMargin/PickerVBox" unique_id=400020]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+
+[node name="PickerList" type="GridContainer" parent="BirthdayOverlay/PickerPanel/PickerMargin/PickerVBox/PickerScroll" unique_id=400021]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 5
+
+[node name="PickerCancelBtn" type="Button" parent="BirthdayOverlay/PickerPanel/PickerMargin/PickerVBox" unique_id=891205433]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "取消"
+
+[node name="RenameOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimBg" type="ColorRect" parent="RenameOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="RenamePanel" type="Panel" parent="RenameOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.3
 anchor_right = 0.95
 anchor_bottom = 0.62
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BirthdayMargin" type="MarginContainer" parent="BirthdayOverlay/BirthdayPanel" unique_id=286989918]
+[node name="RenameMargin" type="MarginContainer" parent="RenameOverlay/RenamePanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -348,46 +455,49 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="BirthdayDialogVBox" type="VBoxContainer" parent="BirthdayOverlay/BirthdayPanel/BirthdayMargin" unique_id=948048242]
+[node name="RenameVBox" type="VBoxContainer" parent="RenameOverlay/RenamePanel/RenameMargin"]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="BirthdayTypeLabel" type="Label" parent="BirthdayOverlay/BirthdayPanel/BirthdayMargin/BirthdayDialogVBox" unique_id=657445132]
-unique_name_in_owner = true
+[node name="RenameLabel" type="Label" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "國曆生日"
+text = "修改名稱"
 horizontal_alignment = 1
 
-[node name="BirthdayInput" type="LineEdit" parent="BirthdayOverlay/BirthdayPanel/BirthdayMargin/BirthdayDialogVBox" unique_id=1295341536]
+[node name="RenameInput" type="LineEdit" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-placeholder_text = "例：1990/01/15"
-virtual_keyboard_type = 2
 
-[node name="BirthdayHBox" type="HBoxContainer" parent="BirthdayOverlay/BirthdayPanel/BirthdayMargin/BirthdayDialogVBox" unique_id=706951139]
+[node name="RenameHBox" type="HBoxContainer" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="ConfirmBirthdayBtn" type="Button" parent="BirthdayOverlay/BirthdayPanel/BirthdayMargin/BirthdayDialogVBox/BirthdayHBox" unique_id=1247356695]
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 22
-text = "確定"
-
-[node name="CancelBirthdayBtn" type="Button" parent="BirthdayOverlay/BirthdayPanel/BirthdayMargin/BirthdayDialogVBox/BirthdayHBox" unique_id=891205433]
+[node name="CancelRenameBtn" type="Button" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 22
 text = "取消"
 
+[node name="ConfirmRenameBtn" type="Button" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "確定"
+
 [connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/NameRow/GenderToggleBtn" to="." method="_on_gender_toggle_pressed"]
-[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow/SolarBtn" to="." method="_on_solar_btn_pressed"]
-[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow/LunarBtn" to="." method="_on_lunar_btn_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow/SolarYearBtn" to="." method="_on_solar_year_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow/SolarMonthBtn" to="." method="_on_solar_month_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow/SolarDayBtn" to="." method="_on_solar_day_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow/LunarYearBtn" to="." method="_on_lunar_year_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow/LunarMonthBtn" to="." method="_on_lunar_month_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow/LunarDayBtn" to="." method="_on_lunar_day_pressed"]
 [connection signal="pressed" from="MainVBox/BackMargin/BackBtn" to="." method="_on_back_pressed"]
-[connection signal="pressed" from="BirthdayOverlay/BirthdayPanel/BirthdayMargin/BirthdayDialogVBox/BirthdayHBox/ConfirmBirthdayBtn" to="." method="_on_confirm_birthday_pressed"]
-[connection signal="pressed" from="BirthdayOverlay/BirthdayPanel/BirthdayMargin/BirthdayDialogVBox/BirthdayHBox/CancelBirthdayBtn" to="." method="_on_cancel_birthday_pressed"]
+[connection signal="pressed" from="BirthdayOverlay/PickerPanel/PickerMargin/PickerVBox/PickerCancelBtn" to="." method="_on_picker_cancel_pressed"]
+[connection signal="gui_input" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/NameRow/NameLabel" to="." method="_on_name_label_gui_input"]
+[connection signal="pressed" from="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox/ConfirmRenameBtn" to="." method="_on_confirm_rename_pressed"]
+[connection signal="pressed" from="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox/CancelRenameBtn" to="." method="_on_cancel_rename_pressed"]
