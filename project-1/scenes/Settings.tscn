@@ -91,13 +91,6 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 22
 text = "大"
 
-[node name="XLargeButton" type="Button" parent="MarginContainer/VBoxContainer/ScaleContainer" unique_id=993552069]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 22
-text = "很大"
 
 [node name="Spacer2" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1196822592]
 custom_minimum_size = Vector2(0, 10)
@@ -131,6 +124,6 @@ text = "返回主選單"
 [connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/SmallButton" to="." method="_on_scale_small_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/MediumButton" to="." method="_on_scale_medium_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/LargeButton" to="." method="_on_scale_large_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/XLargeButton" to="." method="_on_scale_xlarge_pressed"]
+
 [connection signal="pressed" from="MarginContainer/VBoxContainer/BgToggle" to="." method="_on_bg_toggle_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]

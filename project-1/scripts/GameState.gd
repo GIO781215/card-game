@@ -1,20 +1,18 @@
 extends Node
 
 var background_enabled: bool = true
-var ui_scale_level: int = -1
+var ui_scale_level: int = 1
 var person_list: Array = [{"name": "新聊遇"}]
 var current_person_index: int = 0
 const MAX_PERSONS: int = 99
 
-const SCALE_VALUES: Array = [0.6, 0.75, 1.0, 1.35]
-const SCALE_NAMES: Array = ["小", "中", "大", "很大"]
+const SCALE_VALUES: Array = [0.6, 0.75, 1.0]
+const SCALE_NAMES: Array = ["小", "中", "大"]
 
 const SAVE_PATH = "user://save_data.json"
 
 func _ready() -> void:
 	load_data()
-	if ui_scale_level == -1:
-		_auto_detect_scale()
 	apply_ui_scale()
 
 func save_data() -> void:
@@ -43,22 +41,10 @@ func load_data() -> void:
 	if data.has("person_list"):
 		person_list = data["person_list"]
 	if data.has("ui_scale_level"):
-		ui_scale_level = data["ui_scale_level"]
+		ui_scale_level = clampi(data["ui_scale_level"], 0, 2)
 	if data.has("background_enabled"):
 		background_enabled = data["background_enabled"]
 
-func _auto_detect_scale() -> void:
-	var dpi := DisplayServer.screen_get_dpi()
-	if dpi <= 0:
-		ui_scale_level = 1
-	elif dpi > 480:
-		ui_scale_level = 3
-	elif dpi > 360:
-		ui_scale_level = 2
-	elif dpi > 240:
-		ui_scale_level = 1
-	else:
-		ui_scale_level = 0
 
 func apply_ui_scale() -> void:
 	get_tree().root.content_scale_factor = SCALE_VALUES[ui_scale_level]
