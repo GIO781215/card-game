@@ -7,6 +7,8 @@ var _lunar_year: int = 2000
 var _lunar_month: int = 1
 var _lunar_day: int = 1
 var _picker_mode: String = ""
+var _sequential_mode: bool = false
+var _sequential_start: String = ""
 var _touch_start_y: float = 0.0
 var _scroll_start: int = 0
 var _is_dragging: bool = false
@@ -48,35 +50,39 @@ func _max_solar_day(year: int, month: int) -> int:
 
 func _load_birthdays() -> void:
 	var person: Dictionary = GameState.person_list[GameState.current_person_index]
-	_parse_date(person.get("birthday_solar", "2000/01/01"), true)
-	_parse_date(person.get("birthday_lunar", "2000/01/01"), false)
+	_parse_date(person.get("birthday_solar", ""), true)
+	_parse_date(person.get("birthday_lunar", ""), false)
 
 func _parse_date(date_str: String, is_solar: bool) -> void:
-	var y := 2000; var m := 1; var d := 1
 	var parts := date_str.split("/")
 	if parts.size() == 3 and parts[0].is_valid_int() and parts[1].is_valid_int() and parts[2].is_valid_int():
-		y = parts[0].to_int()
-		m = clampi(parts[1].to_int(), 1, 12)
-		d = parts[2].to_int()
-	if is_solar:
-		_solar_year = clampi(y, 1901, 2100); _solar_month = m
-		_solar_day = clampi(d, 1, _max_solar_day(y, m))
+		var y := parts[0].to_int()
+		var m := clampi(parts[1].to_int(), 1, 12)
+		var d := parts[2].to_int()
+		if is_solar:
+			_solar_year = clampi(y, 1901, 2100); _solar_month = m
+			_solar_day = clampi(d, 1, _max_solar_day(y, m))
+		else:
+			_lunar_year = clampi(y, 1901, 2100); _lunar_month = m
+			_lunar_day = clampi(d, 1, 30)
 	else:
-		_lunar_year = clampi(y, 1901, 2100); _lunar_month = m
-		_lunar_day = clampi(d, 1, 30)
+		if is_solar:
+			_solar_year = 0; _solar_month = 0; _solar_day = 0
+		else:
+			_lunar_year = 0; _lunar_month = 0; _lunar_day = 0
 
 func _update_birthday_display() -> void:
-	%SolarYearBtn.text = str(_solar_year) + " 年"
-	%SolarMonthBtn.text = str(_solar_month) + " 月"
-	%SolarDayBtn.text = str(_solar_day) + " 日"
-	%LunarYearBtn.text = str(_lunar_year) + " 年"
-	%LunarMonthBtn.text = str(_lunar_month) + " 月"
-	%LunarDayBtn.text = str(_lunar_day) + " 日"
+	%SolarYearBtn.text  = ("---- 年" if _solar_year  == 0 else str(_solar_year)  + " 年")
+	%SolarMonthBtn.text = ("-- 月"   if _solar_month == 0 else str(_solar_month) + " 月")
+	%SolarDayBtn.text   = ("-- 日"   if _solar_day   == 0 else str(_solar_day)   + " 日")
+	%LunarYearBtn.text  = ("---- 年" if _lunar_year  == 0 else str(_lunar_year)  + " 年")
+	%LunarMonthBtn.text = ("-- 月"   if _lunar_month == 0 else str(_lunar_month) + " 月")
+	%LunarDayBtn.text   = ("-- 日"   if _lunar_day   == 0 else str(_lunar_day)   + " 日")
 
 func _save_birthdays() -> void:
 	var person: Dictionary = GameState.person_list[GameState.current_person_index]
-	person["birthday_solar"] = "%04d/%02d/%02d" % [_solar_year, _solar_month, _solar_day]
-	person["birthday_lunar"] = "%04d/%02d/%02d" % [_lunar_year, _lunar_month, _lunar_day]
+	person["birthday_solar"] = "" if _solar_year == 0 else "%04d/%02d/%02d" % [_solar_year, _solar_month, _solar_day]
+	person["birthday_lunar"] = "" if _lunar_year == 0 else "%04d/%02d/%02d" % [_lunar_year, _lunar_month, _lunar_day]
 	GameState.save_data()
 
 # ── 選擇器 ────────────────────────────────────────────
@@ -119,7 +125,7 @@ func _show_picker(mode: String) -> void:
 		btn.add_theme_font_size_override("font_size", 20)
 		match mode:
 			"solar_year", "lunar_year":     btn.text = str(1901 + i)
-			"solar_month", "lunar_month":   btn.text = str(i + 1)
+			"solar_month", "lunar_month":   btn.text = str(i + 1) + " 月"
 			"solar_day", "lunar_day":       btn.text = str(i + 1)
 		var idx := i
 		btn.pressed.connect(func(): if not _is_dragging: _on_picker_selected(idx))
@@ -134,26 +140,81 @@ func _on_picker_selected(idx: int) -> void:
 	match _picker_mode:
 		"solar_year":
 			_solar_year = 1901 + idx
-			_solar_day = clampi(_solar_day, 1, _max_solar_day(_solar_year, _solar_month))
+			if _solar_day > 0:
+				_solar_day = clampi(_solar_day, 1, _max_solar_day(_solar_year, _solar_month))
 		"solar_month":
 			_solar_month = idx + 1
-			_solar_day = clampi(_solar_day, 1, _max_solar_day(_solar_year, _solar_month))
+			if _solar_day > 0:
+				_solar_day = clampi(_solar_day, 1, _max_solar_day(_solar_year, _solar_month))
 		"solar_day":   _solar_day = idx + 1
 		"lunar_year":  _lunar_year = 1901 + idx
 		"lunar_month":
 			_lunar_month = idx + 1
-			_lunar_day = clampi(_lunar_day, 1, 30)
+			if _lunar_day > 0:
+				_lunar_day = clampi(_lunar_day, 1, 30)
 		"lunar_day":   _lunar_day = idx + 1
+
+	if _sequential_mode:
+		var next := _next_sequential_picker(_picker_mode)
+		if next != "":
+			_show_picker(next)
+			return
+
+	_sequential_mode = false
+	if _picker_mode.begins_with("solar"):
+		_sync_lunar_from_solar()
+	else:
+		_sync_solar_from_lunar()
 	_save_birthdays()
 	_update_birthday_display()
 	%BirthdayOverlay.visible = false
 
-func _on_solar_year_pressed() -> void:  _show_picker("solar_year")
-func _on_solar_month_pressed() -> void: _show_picker("solar_month")
-func _on_solar_day_pressed() -> void:   _show_picker("solar_day")
-func _on_lunar_year_pressed() -> void:  _show_picker("lunar_year")
-func _on_lunar_month_pressed() -> void: _show_picker("lunar_month")
-func _on_lunar_day_pressed() -> void:   _show_picker("lunar_day")
+func _sync_lunar_from_solar() -> void:
+	if _solar_year == 0:
+		return
+	var r: Dictionary = LunarCalendar.solar_to_lunar(_solar_year, _solar_month, _solar_day)
+	_lunar_year = r["year"]
+	_lunar_month = r["month"]
+	_lunar_day = r["day"]
+
+func _sync_solar_from_lunar() -> void:
+	if _lunar_year == 0:
+		return
+	var r: Dictionary = LunarCalendar.lunar_to_solar(_lunar_year, _lunar_month, _lunar_day)
+	_solar_year = r["year"]
+	_solar_month = r["month"]
+	_solar_day = r["day"]
+
+func _on_solar_year_pressed() -> void:  _open_picker("solar_year")
+func _on_solar_month_pressed() -> void: _open_picker("solar_month")
+func _on_solar_day_pressed() -> void:   _open_picker("solar_day")
+func _on_lunar_year_pressed() -> void:  _open_picker("lunar_year")
+func _on_lunar_month_pressed() -> void: _open_picker("lunar_month")
+func _on_lunar_day_pressed() -> void:   _open_picker("lunar_day")
+
+func _open_picker(mode: String) -> void:
+	var calendar := mode.split("_")[0]
+	var is_unset := (_solar_year == 0) if calendar == "solar" else (_lunar_year == 0)
+	if is_unset:
+		_sequential_mode = true
+		_sequential_start = mode.split("_")[1]
+	else:
+		_sequential_mode = false
+	_show_picker(mode)
+
+func _next_sequential_picker(current_mode: String) -> String:
+	var calendar := current_mode.split("_")[0]
+	var part    := current_mode.split("_")[1]
+	var sequences := {
+		"year":  ["year", "month", "day"],
+		"month": ["month", "day", "year"],
+		"day":   ["day", "year", "month"],
+	}
+	var seq: Array = sequences[_sequential_start]
+	var i := seq.find(part)
+	if i >= 0 and i < seq.size() - 1:
+		return calendar + "_" + seq[i + 1]
+	return ""
 
 func _on_picker_cancel_pressed() -> void:
 	%BirthdayOverlay.visible = false
