@@ -17,6 +17,7 @@ const BTN_HEIGHT := 68
 
 func _ready() -> void:
 	GameState.apply_background($BgImage)
+	_apply_dialog_styles()
 	var person: Dictionary = GameState.person_list[GameState.current_person_index]
 	if not person.has("gender"):
 		person["gender"] = "male"
@@ -92,12 +93,16 @@ func _show_picker(mode: String) -> void:
 	_picker_mode = mode
 
 	var panel := $BirthdayOverlay/PickerPanel
+	var s: float = GameState.SCALE_VALUES[GameState.ui_scale_level]
 	if mode in ["solar_year", "lunar_year"]:
 		panel.anchor_top = 0.1
 		panel.anchor_bottom = 0.9
+	elif mode in ["solar_month", "lunar_month"]:
+		panel.anchor_top = 0.25
+		panel.anchor_bottom = 0.25 + 0.30 * s
 	else:
 		panel.anchor_top = 0.25
-		panel.anchor_bottom = 0.72
+		panel.anchor_bottom = 0.25 + 0.42 * s
 
 	var list: GridContainer = %PickerList
 	for child in list.get_children():
@@ -119,11 +124,18 @@ func _show_picker(mode: String) -> void:
 
 	list.columns = cols
 
+	var btn_style := StyleBoxFlat.new()
+	btn_style.bg_color = Color(0.12, 0.12, 0.12, 1.0)
+	btn_style.set_corner_radius_all(4)
+	btn_style.set_content_margin_all(4)
+
 	for i in range(count):
 		var btn := Button.new()
 		btn.custom_minimum_size = Vector2(0, BTN_HEIGHT)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.add_theme_font_size_override("font_size", 20)
+		btn.add_theme_stylebox_override("normal", btn_style)
+		btn.add_theme_stylebox_override("focus",  btn_style)
 		match mode:
 			"solar_year", "lunar_year":     btn.text = str(1901 + i)
 			"solar_month", "lunar_month":   btn.text = str(i + 1) + " 月"
@@ -270,6 +282,12 @@ func _update_cards() -> void:
 	var lunar_lpn := CardCalc.get_life_path_number(_lunar_year, _lunar_month, _lunar_day)
 	%LUN_Card.texture = CardCalc.get_lpn_upper_texture(lunar_lpn)
 	%LLN_Card.texture = CardCalc.get_lpn_lower_texture(lunar_lpn)
+
+func _apply_dialog_styles() -> void:
+	for panel in [$BirthdayOverlay/PickerPanel, $RenameOverlay/RenamePanel]:
+		panel.add_theme_stylebox_override("panel", GameState.make_dialog_stylebox())
+		GameState.apply_dialog_btn_styles(panel)
+	$RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameLabel.add_theme_color_override("font_color", GameState.DIALOG_TITLE_COLOR)
 
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/CardLookup.tscn")

@@ -10,6 +10,7 @@ var _is_dragging: bool = false
 func _ready() -> void:
 	GameState.apply_background($BgImage)
 	GameState.apply_label_color($MarginContainer/VBoxContainer/Title)
+	_apply_dialog_styles()
 
 	_long_press_timer = Timer.new()
 	_long_press_timer.wait_time = 0.6
@@ -156,6 +157,29 @@ func _input(event: InputEvent) -> void:
 			sc.scroll_vertical = _scroll_start + int(_touch_start_y - event.position.y)
 			_long_press_timer.stop()
 			get_viewport().set_input_as_handled()
+
+func _apply_dialog_styles() -> void:
+	var panels := [
+		$OptionsOverlay/CenterContainer/OptionsPanel,
+		$RenameOverlay/RenamePanel,
+		$DeleteOverlay/DeletePanel,
+		$MoveOverlay/MovePanel,
+	]
+	for panel in panels:
+		panel.add_theme_stylebox_override("panel", GameState.make_dialog_stylebox())
+		GameState.apply_dialog_btn_styles(panel)
+	$RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameLabel.add_theme_color_override("font_color", GameState.DIALOG_TITLE_COLOR)
+	$DeleteOverlay/DeletePanel/DeleteMargin/DeleteVBox/DeleteLabel.add_theme_color_override("font_color", GameState.DIALOG_TITLE_COLOR)
+	$MoveOverlay/MovePanel/MoveMargin/MoveVBox/MoveLabel.add_theme_color_override("font_color", GameState.DIALOG_TITLE_COLOR)
+
+	var dark_style := StyleBoxFlat.new()
+	dark_style.bg_color = Color(0.12, 0.12, 0.12, 1.0)
+	dark_style.set_corner_radius_all(4)
+	dark_style.set_content_margin_all(8)
+	var vbox := $OptionsOverlay/CenterContainer/OptionsPanel/OptionsMargin/OptionsVBox
+	for btn in [vbox.get_node("RenameBtn"), vbox.get_node("DeleteBtn"), vbox.get_node("MoveBtn")]:
+		btn.add_theme_stylebox_override("normal", dark_style)
+		btn.add_theme_stylebox_override("focus",  dark_style)
 
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")

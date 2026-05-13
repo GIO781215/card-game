@@ -41,27 +41,41 @@ grow_vertical = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_bottom = 16
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=393408177]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer" unique_id=392705430]
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=697182604]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
-text = "心理評測"
+theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="Content" type="CenterContainer" parent="MarginContainer/VBoxContainer" unique_id=507696075]
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=1682823317]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=1345579382]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 3
 
-[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1741488411]
-custom_minimum_size = Vector2(0, 30)
+[node name="QuestionsVBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=967096433]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 26
+theme_override_constants/separation = 24
+
+[node name="HomeButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1915120527]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
 text = "返回主選單"
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HomeButton" to="." method="_on_back_pressed"]

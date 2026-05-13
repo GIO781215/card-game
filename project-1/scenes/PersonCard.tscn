@@ -479,6 +479,10 @@ custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 
+[node name="RenameSpacer" type="Control" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
 [node name="RenameHBox" type="HBoxContainer" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox"]
 layout_mode = 2
 theme_override_constants/separation = 12
