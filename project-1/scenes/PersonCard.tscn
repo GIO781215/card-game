@@ -197,7 +197,8 @@ theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BlueLeft" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/BlueRow/BlueHBox/BlueColLeft" unique_id=60138255]
+[node name="NCZ_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/BlueRow/BlueHBox/BlueColLeft" unique_id=60138255]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 190)
 layout_mode = 2
 texture = ExtResource("3_blueboy")
@@ -212,14 +213,16 @@ size_flags_vertical = 3
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="BlueTop" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/BlueRow/BlueHBox/BlueColCenter" unique_id=546706742]
+[node name="NUN_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/BlueRow/BlueHBox/BlueColCenter" unique_id=546706742]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 190)
 layout_mode = 2
 texture = ExtResource("3_blueboy")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="BlueBottom" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/BlueRow/BlueHBox/BlueColCenter" unique_id=907562851]
+[node name="NLN_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/BlueRow/BlueHBox/BlueColCenter" unique_id=907562851]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 190)
 layout_mode = 2
 texture = ExtResource("3_blueboy")
@@ -235,7 +238,8 @@ theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BlueRight" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/BlueRow/BlueHBox/BlueColRight" unique_id=208755828]
+[node name="NWZ_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/BlueRow/BlueHBox/BlueColRight" unique_id=208755828]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 190)
 layout_mode = 2
 texture = ExtResource("3_blueboy")
@@ -275,7 +279,8 @@ theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PinkLeft" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/PinkRow/PinkHBox/PinkColLeft" unique_id=1574636052]
+[node name="LCZ_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/PinkRow/PinkHBox/PinkColLeft" unique_id=1574636052]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 190)
 layout_mode = 2
 texture = ExtResource("4_pinkgril")
@@ -290,14 +295,16 @@ size_flags_vertical = 3
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="PinkTop" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/PinkRow/PinkHBox/PinkColCenter" unique_id=1082321196]
+[node name="LUN_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/PinkRow/PinkHBox/PinkColCenter" unique_id=1082321196]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 190)
 layout_mode = 2
 texture = ExtResource("4_pinkgril")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PinkBottom" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/PinkRow/PinkHBox/PinkColCenter" unique_id=1593468063]
+[node name="LLN_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/PinkRow/PinkHBox/PinkColCenter" unique_id=1593468063]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 190)
 layout_mode = 2
 texture = ExtResource("4_pinkgril")
@@ -313,7 +320,8 @@ theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PinkRight" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/PinkRow/PinkHBox/PinkColRight" unique_id=1002851059]
+[node name="LWZ_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/PinkRow/PinkHBox/PinkColRight" unique_id=1002851059]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 190)
 layout_mode = 2
 texture = ExtResource("4_pinkgril")

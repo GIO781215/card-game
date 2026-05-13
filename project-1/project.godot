@@ -20,6 +20,7 @@ config/run/main_scene="res://scenes/MainMenu.tscn"
 
 GameState="*res://scripts/GameState.gd"
 LunarCalendar="*res://scripts/LunarCalendar.gd"
+CardCalc="*res://scripts/CardCalc.gd"
 
 [display]
 

@@ -26,6 +26,7 @@ func _ready() -> void:
 	_load_birthdays()
 	_update_birthday_display()
 	_update_gender_button()
+	_update_cards()
 
 # ── 性別 ─────────────────────────────────────────────
 
@@ -167,6 +168,7 @@ func _on_picker_selected(idx: int) -> void:
 		_sync_solar_from_lunar()
 	_save_birthdays()
 	_update_birthday_display()
+	_update_cards()
 	%BirthdayOverlay.visible = false
 
 func _sync_lunar_from_solar() -> void:
@@ -242,6 +244,32 @@ func _input(event: InputEvent) -> void:
 		if _is_dragging:
 			sc.scroll_vertical = _scroll_start + int(_touch_start_y - event.position.y)
 			get_viewport().set_input_as_handled()
+
+func _update_cards() -> void:
+	if _solar_year == 0:
+		%NCZ_Card.texture = null
+		%LCZ_Card.texture = null
+		%NWZ_Card.texture = null
+		%LWZ_Card.texture = null
+		%NUN_Card.texture = null
+		%NLN_Card.texture = null
+		%LUN_Card.texture = null
+		%LLN_Card.texture = null
+		return
+	var solar_animal := CardCalc.get_chinese_zodiac(_solar_year)
+	%NCZ_Card.texture = CardCalc.get_cz_card_texture(solar_animal)
+	var lunar_animal := CardCalc.get_chinese_zodiac(_lunar_year)
+	%LCZ_Card.texture = CardCalc.get_cz_card_texture(lunar_animal)
+	var solar_sign := CardCalc.get_western_zodiac(_solar_month, _solar_day)
+	%NWZ_Card.texture = CardCalc.get_wz_card_texture(solar_sign)
+	var lunar_sign := CardCalc.get_western_zodiac(_lunar_month, _lunar_day)
+	%LWZ_Card.texture = CardCalc.get_wz_card_texture(lunar_sign)
+	var solar_lpn := CardCalc.get_life_path_number(_solar_year, _solar_month, _solar_day)
+	%NUN_Card.texture = CardCalc.get_lpn_upper_texture(solar_lpn)
+	%NLN_Card.texture = CardCalc.get_lpn_lower_texture(solar_lpn)
+	var lunar_lpn := CardCalc.get_life_path_number(_lunar_year, _lunar_month, _lunar_day)
+	%LUN_Card.texture = CardCalc.get_lpn_upper_texture(lunar_lpn)
+	%LLN_Card.texture = CardCalc.get_lpn_lower_texture(lunar_lpn)
 
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/CardLookup.tscn")
