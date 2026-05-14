@@ -21,6 +21,8 @@ var _mouse_pressed: bool = false
 var _swipe_velocity: float = 0.0
 var _touch_start_time: float = 0.0
 var _page2_gender_btn: Button = null
+var _pressed_card: Control = null
+var _card_spring_back: Callable = Callable()
 var _page2_date_label: Label = null
 var _page2_age_label: Label = null
 
@@ -372,6 +374,7 @@ func _input(event: InputEvent) -> void:
 			if not _swipe_determined:
 				if absf(dx) > 12.0 or absf(dy) > 8.0:
 					_swipe_determined = true
+					_cancel_card_press()
 					_is_h_swiping = absf(dx) > absf(dy)
 					if not _is_h_swiping:
 						_is_dragging = true
@@ -400,6 +403,7 @@ func _input(event: InputEvent) -> void:
 		if not _swipe_determined:
 			if absf(dx) > 12.0 or absf(dy) > 8.0:
 				_swipe_determined = true
+				_cancel_card_press()
 				_is_h_swiping = absf(dx) > absf(dy)
 				if not _is_h_swiping:
 					_is_dragging = true
@@ -474,6 +478,58 @@ func _update_page_indicator() -> void:
 	%IndicatorLeft.add_theme_stylebox_override("panel",  _make_indicator_style(_card_page == 0))
 	%IndicatorRight.add_theme_stylebox_override("panel", _make_indicator_style(_card_page == 1))
 
+func _cancel_card_press() -> void:
+	if _pressed_card == null:
+		return
+	_pressed_card = null
+	if _card_spring_back.is_valid():
+		_card_spring_back.call()
+	_card_spring_back = Callable()
+
+func _attach_card_press_anim(node: Control) -> void:
+	node.mouse_filter = Control.MOUSE_FILTER_STOP
+	node.resized.connect(func(): node.pivot_offset = node.size / 2.0)
+	var _tween: Tween = null
+	var _is_pressed := false
+
+	var spring_back := func():
+		_is_pressed = false
+		if _tween:
+			_tween.kill()
+		_tween = node.create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SPRING)
+		_tween.tween_property(node, "scale", Vector2(1.0, 1.0), 0.45)
+
+	node.mouse_exited.connect(func():
+		if _is_pressed:
+			_pressed_card = null
+			_card_spring_back = Callable()
+			spring_back.call()
+	)
+
+	node.gui_input.connect(func(event: InputEvent):
+		var pressed := false
+		var relevant := false
+		if event is InputEventScreenTouch:
+			pressed = event.pressed; relevant = true
+		elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+			pressed = event.pressed; relevant = true
+		if not relevant:
+			return
+		if pressed:
+			_is_pressed = true
+			_pressed_card = node
+			_card_spring_back = spring_back
+			if _tween:
+				_tween.kill()
+			_tween = node.create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+			_tween.tween_property(node, "scale", Vector2(0.88, 0.88), 0.08)
+		else:
+			_is_pressed = false
+			_pressed_card = null
+			_card_spring_back = Callable()
+			spring_back.call()
+	)
+
 func _make_page2_panel(code: String, skin: String, style: StyleBoxFlat, lbl: String) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", style)
@@ -486,6 +542,7 @@ func _make_page2_panel(code: String, skin: String, style: StyleBoxFlat, lbl: Str
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	card.mouse_filter = Control.MOUSE_FILTER_STOP
 	card.texture = CardCalc.get_card_texture_for_skin(code, skin)
 	vbox.add_child(card)
 	var label := Label.new()
@@ -494,6 +551,7 @@ func _make_page2_panel(code: String, skin: String, style: StyleBoxFlat, lbl: Str
 	label.add_theme_font_size_override("font_size", 13)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(label)
+	_attach_card_press_anim(card)
 	return panel
 
 func _build_page2_center_info() -> Control:
@@ -646,6 +704,7 @@ func _build_page2(page_w: float) -> void:
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		card.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		card.mouse_filter = Control.MOUSE_FILTER_STOP
 		card.texture = CardCalc.get_card_texture_for_skin("BK", page2_skin)
 		vbox.add_child(card)
 		var label := Label.new()
@@ -654,6 +713,7 @@ func _build_page2(page_w: float) -> void:
 		label.add_theme_font_size_override("font_size", 12)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(label)
+		_attach_card_press_anim(card)
 		bottom_hbox.add_child(panel)
 
 	var bottom_pad := Control.new()
