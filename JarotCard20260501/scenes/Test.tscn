@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://otjy0u126pnn"]
+
+[ext_resource type="Script" uid="uid://uvq4qfqhj3ni" path="res://scripts/test.gd" id="1_wen4y"]
+
+[node name="Control" type="Control" unique_id=240275421]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wen4y")
+
+[node name="Button" type="Button" parent="." unique_id=156835933]
+layout_mode = 0
+offset_left = 438.0
+offset_top = 84.0
+offset_right = 663.0
+offset_bottom = 248.0
+text = "按鈕"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="toggled" from="Button" to="." method="_on_button_toggled"]

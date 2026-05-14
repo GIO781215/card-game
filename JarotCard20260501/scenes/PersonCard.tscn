@@ -1,0 +1,558 @@
+[gd_scene format=3 uid="uid://dsj6whki2reqq"]
+
+[ext_resource type="Script" uid="uid://c7qwda8coxkmk" path="res://scripts/PersonCard.gd" id="1_personcard"]
+[ext_resource type="Texture2D" uid="uid://bl2uk3ov2b6m7" path="res://assets/images/background.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://d3ngcokhul78l" path="res://assets/images/cardskin1/BlueBoy.png" id="3_blueboy"]
+[ext_resource type="Texture2D" uid="uid://do4psni07ysvi" path="res://assets/images/cardskin1/RedpinkGril.png" id="4_pinkgril"]
+
+[node name="PersonCard" type="Control" unique_id=1449782885]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_personcard")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1388013118]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BgImage" type="TextureRect" parent="." unique_id=985066838]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MainVBox" type="VBoxContainer" parent="." unique_id=633234333]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainVBox" unique_id=1131599619]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 3
+
+[node name="ContentVBox" type="VBoxContainer" parent="MainVBox/ScrollContainer" unique_id=1395750544]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="TopPad" type="Control" parent="MainVBox/ScrollContainer/ContentVBox" unique_id=575074079]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="InfoMargin" type="MarginContainer" parent="MainVBox/ScrollContainer/ContentVBox" unique_id=2046853033]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 8
+
+[node name="InfoVBox" type="VBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin" unique_id=433051098]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="NameRow" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox" unique_id=300001]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="NameLabel" type="Label" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/NameRow" unique_id=727705049]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 44
+vertical_alignment = 1
+text_overrun_behavior = 3
+mouse_filter = 0
+
+[node name="GenderToggleBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/NameRow" unique_id=300002]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(88, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "♂ 男"
+
+[node name="SolarRow" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox" unique_id=491812259]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SolarTitle" type="Label" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=635420876]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 20
+text = "國曆生日"
+vertical_alignment = 1
+
+[node name="SolarYearBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=500001]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "2000 年"
+
+[node name="SolarMonthBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=500002]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "1 月"
+
+[node name="SolarDayBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=500003]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "1 日"
+
+[node name="LunarRow" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox" unique_id=864531038]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LunarTitle" type="Label" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=213066587]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 20
+text = "農曆生日"
+vertical_alignment = 1
+
+[node name="LunarYearBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=500004]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "2000 年"
+
+[node name="LunarMonthBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=500005]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "1 月"
+
+[node name="LunarDayBtn" type="Button" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=500006]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 18
+text = "1 日"
+
+[node name="SwipeArea" type="Control" parent="MainVBox/ScrollContainer/ContentVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 580)
+size_flags_horizontal = 3
+clip_contents = true
+
+[node name="CardsHBox" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 0
+
+[node name="Page1" type="VBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(540, 0)
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="TopPad" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="BlueRow" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1" unique_id=667757257]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BlueLeftPad" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow" unique_id=1145924033]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BlueHBox" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow" unique_id=1445217633]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BlueColLeft" type="VBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox" unique_id=2142222727]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="BlueLeftSpacer1" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox/BlueColLeft" unique_id=2015264750]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="NCZ_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox/BlueColLeft" unique_id=60138255]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 190)
+layout_mode = 2
+texture = ExtResource("3_blueboy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BlueLeftSpacer2" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox/BlueColLeft" unique_id=1809677106]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BlueColCenter" type="VBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox" unique_id=1597719638]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="NUN_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox/BlueColCenter" unique_id=546706742]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 190)
+layout_mode = 2
+texture = ExtResource("3_blueboy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NLN_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox/BlueColCenter" unique_id=907562851]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 190)
+layout_mode = 2
+texture = ExtResource("3_blueboy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BlueColRight" type="VBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox" unique_id=1394474784]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="BlueRightSpacer1" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox/BlueColRight" unique_id=1638484849]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="NWZ_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox/BlueColRight" unique_id=208755828]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 190)
+layout_mode = 2
+texture = ExtResource("3_blueboy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BlueRightSpacer2" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow/BlueHBox/BlueColRight" unique_id=1801640970]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BlueRightPad" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/BlueRow" unique_id=1269043726]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GroupSpacer" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1" unique_id=1100638372]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="PinkRow" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1" unique_id=1121006074]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PinkLeftPad" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow" unique_id=1369855932]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PinkHBox" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow" unique_id=171457449]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PinkColLeft" type="VBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox" unique_id=1108372539]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="PinkLeftSpacer1" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox/PinkColLeft" unique_id=270800701]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LCZ_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox/PinkColLeft" unique_id=1574636052]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 190)
+layout_mode = 2
+texture = ExtResource("4_pinkgril")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PinkLeftSpacer2" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox/PinkColLeft" unique_id=1198828111]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PinkColCenter" type="VBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox" unique_id=1392133705]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LUN_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox/PinkColCenter" unique_id=1082321196]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 190)
+layout_mode = 2
+texture = ExtResource("4_pinkgril")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LLN_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox/PinkColCenter" unique_id=1593468063]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 190)
+layout_mode = 2
+texture = ExtResource("4_pinkgril")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PinkColRight" type="VBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox" unique_id=664705628]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="PinkRightSpacer1" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox/PinkColRight" unique_id=1543547585]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LWZ_Card" type="TextureRect" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox/PinkColRight" unique_id=1002851059]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 190)
+layout_mode = 2
+texture = ExtResource("4_pinkgril")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PinkRightSpacer2" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow/PinkHBox/PinkColRight" unique_id=1053608241]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PinkRightPad" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1/PinkRow" unique_id=760742230]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BottomPad" type="Control" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox/Page1" unique_id=412305811]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="Page2" type="VBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/SwipeArea/CardsHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+visible = false
+
+[node name="PageIndicatorMargin" type="MarginContainer" parent="MainVBox/ScrollContainer/ContentVBox"]
+layout_mode = 2
+modulate = Color(1, 1, 1, 0)
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="IndicatorRow" type="HBoxContainer" parent="MainVBox/ScrollContainer/ContentVBox/PageIndicatorMargin"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 28
+
+[node name="IndicatorLeft" type="Panel" parent="MainVBox/ScrollContainer/ContentVBox/PageIndicatorMargin/IndicatorRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 9)
+layout_mode = 2
+
+[node name="IndicatorRight" type="Panel" parent="MainVBox/ScrollContainer/ContentVBox/PageIndicatorMargin/IndicatorRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 9)
+layout_mode = 2
+
+[node name="BackMargin" type="MarginContainer" parent="MainVBox" unique_id=259867276]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
+
+[node name="BackBtn" type="Button" parent="MainVBox/BackMargin" unique_id=1066792465]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 26
+text = "返回"
+
+[node name="BirthdayOverlay" type="Control" parent="." unique_id=852089122]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimBg" type="ColorRect" parent="BirthdayOverlay" unique_id=1600279791]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="PickerPanel" type="Panel" parent="BirthdayOverlay" unique_id=535694477]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.25
+anchor_right = 0.95
+anchor_bottom = 0.72
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PickerMargin" type="MarginContainer" parent="BirthdayOverlay/PickerPanel" unique_id=286989918]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="PickerVBox" type="VBoxContainer" parent="BirthdayOverlay/PickerPanel/PickerMargin" unique_id=948048242]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PickerScroll" type="ScrollContainer" parent="BirthdayOverlay/PickerPanel/PickerMargin/PickerVBox" unique_id=400020]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+
+[node name="PickerList" type="GridContainer" parent="BirthdayOverlay/PickerPanel/PickerMargin/PickerVBox/PickerScroll" unique_id=400021]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 5
+
+[node name="PickerCancelBtn" type="Button" parent="BirthdayOverlay/PickerPanel/PickerMargin/PickerVBox" unique_id=891205433]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "取消"
+
+[node name="RenameOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimBg" type="ColorRect" parent="RenameOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="RenamePanel" type="Panel" parent="RenameOverlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.3
+anchor_right = 0.95
+anchor_bottom = 0.62
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RenameMargin" type="MarginContainer" parent="RenameOverlay/RenamePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="RenameVBox" type="VBoxContainer" parent="RenameOverlay/RenamePanel/RenameMargin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RenameLabel" type="Label" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "修改名稱"
+horizontal_alignment = 1
+
+[node name="RenameInput" type="LineEdit" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+
+[node name="RenameSpacer" type="Control" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RenameHBox" type="HBoxContainer" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CancelRenameBtn" type="Button" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "取消"
+
+[node name="ConfirmRenameBtn" type="Button" parent="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "確定"
+
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/NameRow/GenderToggleBtn" to="." method="_on_gender_toggle_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow/SolarYearBtn" to="." method="_on_solar_year_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow/SolarMonthBtn" to="." method="_on_solar_month_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow/SolarDayBtn" to="." method="_on_solar_day_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow/LunarYearBtn" to="." method="_on_lunar_year_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow/LunarMonthBtn" to="." method="_on_lunar_month_pressed"]
+[connection signal="pressed" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow/LunarDayBtn" to="." method="_on_lunar_day_pressed"]
+[connection signal="pressed" from="MainVBox/BackMargin/BackBtn" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="BirthdayOverlay/PickerPanel/PickerMargin/PickerVBox/PickerCancelBtn" to="." method="_on_picker_cancel_pressed"]
+[connection signal="gui_input" from="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/NameRow/NameLabel" to="." method="_on_name_label_gui_input"]
+[connection signal="pressed" from="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox/ConfirmRenameBtn" to="." method="_on_confirm_rename_pressed"]
+[connection signal="pressed" from="RenameOverlay/RenamePanel/RenameMargin/RenameVBox/RenameHBox/CancelRenameBtn" to="." method="_on_cancel_rename_pressed"]

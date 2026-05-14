@@ -1,0 +1,137 @@
+extends Control
+
+func _ready() -> void:
+	GameState.apply_background($BgImage)
+	_update_bg_button()
+	_update_scale_buttons()
+	_update_skin_buttons()
+	_update_label_colors()
+	_apply_dialog_styles()
+
+func _apply_dialog_styles() -> void:
+	var panel := $ConfirmOverlay/CenterContainer/Panel
+	panel.add_theme_stylebox_override("panel", GameState.make_dialog_stylebox())
+	panel.get_node("Margin/VBox/TitleLabel").add_theme_color_override("font_color", GameState.DIALOG_TITLE_COLOR)
+	panel.get_node("Margin/VBox/MsgLabel").add_theme_color_override("font_color", GameState.DIALOG_TEXT_COLOR)
+	GameState.apply_dialog_btn_styles(panel)
+
+func _update_bg_button() -> void:
+	%BgToggle.text = "關閉背景" if GameState.background_enabled else "開啟背景"
+
+func _update_label_colors() -> void:
+	GameState.apply_label_color($MarginContainer/VBoxContainer/Title)
+	GameState.apply_label_color($MarginContainer/VBoxContainer/ScaleLabel)
+	GameState.apply_label_color($MarginContainer/VBoxContainer/BgLabel)
+	GameState.apply_label_color($MarginContainer/VBoxContainer/CardSkinLabel)
+	GameState.apply_label_color($MarginContainer/VBoxContainer/RecordLabel)
+
+func _update_scale_buttons() -> void:
+	var base := %SmallButton.get_theme_stylebox("normal") as StyleBoxFlat
+	var base_alpha := base.bg_color.a if base else 0.5
+
+	var selected_style := StyleBoxFlat.new()
+	var sc := GameState.SELECTED_COLOR
+	selected_style.bg_color = Color(sc.r, sc.g, sc.b, base_alpha)
+	selected_style.set_corner_radius_all(6)
+	selected_style.set_content_margin_all(8)
+
+	var buttons := [%SmallButton, %MediumButton, %LargeButton]
+	for i in range(buttons.size()):
+		var btn: Button = buttons[i]
+		if i == GameState.ui_scale_level:
+			btn.add_theme_stylebox_override("normal", selected_style)
+			btn.add_theme_stylebox_override("hover",   selected_style)
+			btn.add_theme_stylebox_override("pressed", selected_style)
+			btn.add_theme_color_override("font_color", Color.WHITE)
+		else:
+			btn.remove_theme_stylebox_override("normal")
+			btn.remove_theme_stylebox_override("hover")
+			btn.remove_theme_stylebox_override("pressed")
+			btn.remove_theme_color_override("font_color")
+
+const _SKIN_CUTE  := "cardskin4"
+const _SKIN_EGYPT := "cardskin1"
+const _SKIN_KANGL := "cardskin5"
+
+func _update_skin_buttons() -> void:
+	var base := %CuteButton.get_theme_stylebox("normal") as StyleBoxFlat
+	var base_alpha := base.bg_color.a if base else 0.5
+
+	var selected_style := StyleBoxFlat.new()
+	var sc := GameState.SELECTED_COLOR
+	selected_style.bg_color = Color(sc.r, sc.g, sc.b, base_alpha)
+	selected_style.set_corner_radius_all(6)
+	selected_style.set_content_margin_all(8)
+
+	var skin_map := {
+		%CuteButton:  _SKIN_CUTE,
+		%EgyptButton: _SKIN_EGYPT,
+		%KanglButton: _SKIN_KANGL,
+	}
+	for btn in skin_map:
+		if skin_map[btn] == GameState.card_skin:
+			btn.add_theme_stylebox_override("normal",  selected_style)
+			btn.add_theme_stylebox_override("hover",   selected_style)
+			btn.add_theme_stylebox_override("pressed", selected_style)
+			btn.add_theme_color_override("font_color", Color.WHITE)
+		else:
+			btn.remove_theme_stylebox_override("normal")
+			btn.remove_theme_stylebox_override("hover")
+			btn.remove_theme_stylebox_override("pressed")
+			btn.remove_theme_color_override("font_color")
+
+func _on_skin_cute_pressed() -> void:
+	GameState.card_skin = _SKIN_CUTE
+	GameState.save_data()
+	_update_skin_buttons()
+
+func _on_skin_egypt_pressed() -> void:
+	GameState.card_skin = _SKIN_EGYPT
+	GameState.save_data()
+	_update_skin_buttons()
+
+func _on_skin_kangl_pressed() -> void:
+	GameState.card_skin = _SKIN_KANGL
+	GameState.save_data()
+	_update_skin_buttons()
+
+func _on_scale_small_pressed() -> void:
+	GameState.ui_scale_level = 0
+	GameState.apply_ui_scale()
+	GameState.save_data()
+	_update_scale_buttons()
+
+func _on_scale_medium_pressed() -> void:
+	GameState.ui_scale_level = 1
+	GameState.apply_ui_scale()
+	GameState.save_data()
+	_update_scale_buttons()
+
+func _on_scale_large_pressed() -> void:
+	GameState.ui_scale_level = 2
+	GameState.apply_ui_scale()
+	GameState.save_data()
+	_update_scale_buttons()
+
+
+func _on_bg_toggle_pressed() -> void:
+	GameState.background_enabled = !GameState.background_enabled
+	$BgImage.visible = GameState.background_enabled
+	GameState.save_data()
+	_update_bg_button()
+	_update_label_colors()
+
+func _on_delete_all_pressed() -> void:
+	%ConfirmOverlay.visible = true
+
+func _on_cancel_delete_pressed() -> void:
+	%ConfirmOverlay.visible = false
+
+func _on_confirm_delete_pressed() -> void:
+	GameState.person_list = [{"name": "新聊遇"}]
+	GameState.current_person_index = 0
+	GameState.save_data()
+	%ConfirmOverlay.visible = false
+
+func _on_back_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")

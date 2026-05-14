@@ -1,0 +1,100 @@
+[gd_scene format=3 uid="uid://b1game000001"]
+
+[ext_resource type="Script" uid="uid://b6e7by467dfm5" path="res://scripts/Game.gd" id="1_game"]
+
+[node name="Game" type="Control" unique_id=1014077427]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_game")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1754476764]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.623, 0.635, 0.835, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=105523411]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 60
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 60
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=349899527]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ToggleCardButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=20077431]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+text = "顯示卡牌"
+
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer" unique_id=1950497495]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Card" type="Panel" parent="MarginContainer/VBoxContainer/CenterContainer" unique_id=975305237]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(280, 400)
+layout_mode = 2
+
+[node name="CardContent" type="VBoxContainer" parent="MarginContainer/VBoxContainer/CenterContainer/Card" unique_id=826744207]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterContainer/Card/CardContent" unique_id=809507583]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.05, 0.05, 1)
+theme_override_font_sizes/font_size = 32
+text = "A"
+
+[node name="SuitCenter" type="Label" parent="MarginContainer/VBoxContainer/CenterContainer/Card/CardContent" unique_id=1220141374]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.85, 0.05, 0.05, 1)
+theme_override_font_sizes/font_size = 80
+text = "♥"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BottomLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterContainer/Card/CardContent" unique_id=1992774743]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.05, 0.05, 1)
+theme_override_font_sizes/font_size = 32
+text = "A"
+horizontal_alignment = 2
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1249912639]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "返回主選單"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ToggleCardButton" to="." method="_on_toggle_card_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]

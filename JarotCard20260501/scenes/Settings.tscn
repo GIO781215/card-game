@@ -1,0 +1,266 @@
+[gd_scene format=3 uid="uid://b1settings01"]
+
+[ext_resource type="Script" uid="uid://cpbn8l0wvlaki" path="res://scripts/Settings.gd" id="1_settings"]
+[ext_resource type="Texture2D" uid="uid://bl2uk3ov2b6m7" path="res://assets/images/background.png" id="2_bg"]
+
+
+[node name="Settings" type="Control" unique_id=82004479]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_settings")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1918705324]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BgImage" type="TextureRect" parent="." unique_id=1920191843]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1201507736]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=381422967]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1599888396]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "系統設定"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1152907599]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ScaleLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=234125636]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "畫面大小"
+horizontal_alignment = 1
+
+[node name="ScaleContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=548155203]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SmallButton" type="Button" parent="MarginContainer/VBoxContainer/ScaleContainer" unique_id=742255297]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "小"
+
+[node name="MediumButton" type="Button" parent="MarginContainer/VBoxContainer/ScaleContainer" unique_id=602070700]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "中"
+
+[node name="LargeButton" type="Button" parent="MarginContainer/VBoxContainer/ScaleContainer" unique_id=2120242421]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "大"
+
+
+[node name="CardSkinSpacer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=239248780]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="CardSkinLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=239248781]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "卡圖設置"
+horizontal_alignment = 1
+
+[node name="CardSkinContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=239248782]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CuteButton" type="Button" parent="MarginContainer/VBoxContainer/CardSkinContainer" unique_id=239248783]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "可愛風"
+
+[node name="EgyptButton" type="Button" parent="MarginContainer/VBoxContainer/CardSkinContainer" unique_id=239248784]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "埃及風"
+
+[node name="KanglButton" type="Button" parent="MarginContainer/VBoxContainer/CardSkinContainer" unique_id=239248785]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "康樂風"
+
+[node name="Spacer2" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1196822592]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="BgLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=687461214]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "背景圖片"
+horizontal_alignment = 1
+
+[node name="BgToggle" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1054145317]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "開啟背景"
+
+[node name="Spacer3" type="Control" parent="MarginContainer/VBoxContainer" unique_id=239248791]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="RecordLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=339248792]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "聊遇者紀錄"
+horizontal_alignment = 1
+
+[node name="DeleteAllButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=441338801]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "全部刪除"
+
+[node name="Spacer4" type="Control" parent="MarginContainer/VBoxContainer" unique_id=551338802]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1778834691]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 26
+text = "返回主選單"
+
+[node name="ConfirmOverlay" type="Control" parent="." unique_id=551448911]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BgDim" type="ColorRect" parent="ConfirmOverlay" unique_id=661558021]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="CenterContainer" type="CenterContainer" parent="ConfirmOverlay" unique_id=701558131]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="ConfirmOverlay/CenterContainer" unique_id=771668131]
+layout_mode = 2
+custom_minimum_size = Vector2(460, 0)
+
+[node name="Margin" type="MarginContainer" parent="ConfirmOverlay/CenterContainer/Panel" unique_id=881668131]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 28
+
+[node name="VBox" type="VBoxContainer" parent="ConfirmOverlay/CenterContainer/Panel/Margin" unique_id=881778241]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="TitleLabel" type="Label" parent="ConfirmOverlay/CenterContainer/Panel/Margin/VBox" unique_id=771888131]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "確定要刪除？"
+horizontal_alignment = 1
+
+[node name="MsgLabel" type="Label" parent="ConfirmOverlay/CenterContainer/Panel/Margin/VBox" unique_id=991888351]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "所有聊遇者紀錄將被清除，\n此操作無法復原。"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="BtnRow" type="HBoxContainer" parent="ConfirmOverlay/CenterContainer/Panel/Margin/VBox" unique_id=102998461]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="CancelBtn" type="Button" parent="ConfirmOverlay/CenterContainer/Panel/Margin/VBox/BtnRow" unique_id=213108571]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "取消"
+
+[node name="ConfirmBtn" type="Button" parent="ConfirmOverlay/CenterContainer/Panel/Margin/VBox/BtnRow" unique_id=324218681]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "確定"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/SmallButton" to="." method="_on_scale_small_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/MediumButton" to="." method="_on_scale_medium_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ScaleContainer/LargeButton" to="." method="_on_scale_large_pressed"]
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/BgToggle" to="." method="_on_bg_toggle_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/CardSkinContainer/CuteButton" to="." method="_on_skin_cute_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/CardSkinContainer/EgyptButton" to="." method="_on_skin_egypt_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/CardSkinContainer/KanglButton" to="." method="_on_skin_kangl_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/DeleteAllButton" to="." method="_on_delete_all_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="ConfirmOverlay/CenterContainer/Panel/Margin/VBox/BtnRow/CancelBtn" to="." method="_on_cancel_delete_pressed"]
+[connection signal="pressed" from="ConfirmOverlay/CenterContainer/Panel/Margin/VBox/BtnRow/ConfirmBtn" to="." method="_on_confirm_delete_pressed"]
