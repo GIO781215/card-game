@@ -73,6 +73,7 @@ var _answers: Array = []
 var _touch_start_y: float = 0.0
 var _scroll_start: int = 0
 var _is_dragging: bool = false
+var _mouse_pressed: bool = false
 
 func _ready() -> void:
 	GameState.apply_background($BgImage)
@@ -82,10 +83,12 @@ func _ready() -> void:
 			page_answers.append(-1)
 		_answers.append(page_answers)
 	_build_page(_current_page)
+	%TitleLabel.add_theme_color_override("font_color", GameState.label_color())
 
 func _build_page(page_idx: int) -> void:
 	var page: Dictionary = _PAGES[page_idx]
 	%TitleLabel.text = page["title"]
+	%TitleLabel.add_theme_color_override("font_color", GameState.label_color())
 
 	var vbox: VBoxContainer = %QuestionsVBox
 	for child in vbox.get_children():
@@ -118,6 +121,7 @@ func _build_page(page_idx: int) -> void:
 		q_label.text = str(i + 1 + page["q_offset"]) + ".  " + page["questions"][i]
 		q_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		q_label.add_theme_font_size_override("font_size", 19)
+		q_label.add_theme_color_override("font_color", GameState.label_color())
 		q_block.add_child(q_label)
 
 		var opts_hbox := HBoxContainer.new()
@@ -202,4 +206,23 @@ func _input(event: InputEvent) -> void:
 			_is_dragging = true
 		if _is_dragging:
 			sc.scroll_vertical = _scroll_start + int(_touch_start_y - event.position.y)
+			get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT:
+			if mb.pressed:
+				_mouse_pressed = true
+				_touch_start_y = mb.position.y
+				_scroll_start = sc.scroll_vertical
+				_is_dragging = false
+			else:
+				_mouse_pressed = false
+				if _is_dragging:
+					get_viewport().set_input_as_handled()
+	elif event is InputEventMouseMotion and _mouse_pressed:
+		var mm := event as InputEventMouseMotion
+		if absf(mm.position.y - _touch_start_y) > 8.0:
+			_is_dragging = true
+		if _is_dragging:
+			sc.scroll_vertical = _scroll_start + int(_touch_start_y - mm.position.y)
 			get_viewport().set_input_as_handled()

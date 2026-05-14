@@ -21,6 +21,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(1, 1, 1, 1)
 
 [node name="BgImage" type="TextureRect" parent="." unique_id=985066838]
 layout_mode = 1
@@ -96,6 +97,7 @@ layout_mode = 2
 theme_override_constants/separation = 4
 
 [node name="SolarTitle" type="Label" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/SolarRow" unique_id=635420876]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
 size_flags_vertical = 3
@@ -134,6 +136,7 @@ layout_mode = 2
 theme_override_constants/separation = 4
 
 [node name="LunarTitle" type="Label" parent="MainVBox/ScrollContainer/ContentVBox/InfoMargin/InfoVBox/LunarRow" unique_id=213066587]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
 size_flags_vertical = 3

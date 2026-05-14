@@ -87,5 +87,8 @@ func apply_ui_scale() -> void:
 func apply_background(bg_image: TextureRect) -> void:
 	bg_image.visible = background_enabled
 
+func label_color() -> Color:
+	return Color.WHITE if background_enabled else Color.BLACK
+
 func apply_label_color(label: Label) -> void:
-	label.add_theme_color_override("font_color", Color.WHITE if background_enabled else Color.BLACK)
+	label.add_theme_color_override("font_color", label_color())

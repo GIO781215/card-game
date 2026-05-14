@@ -37,6 +37,8 @@ func _ready() -> void:
 		GameState.save_data()
 	%NameLabel.text = person["name"]
 	GameState.apply_label_color(%NameLabel)
+	GameState.apply_label_color(%SolarTitle)
+	GameState.apply_label_color(%LunarTitle)
 	_load_birthdays()
 	_update_birthday_display()
 	_update_gender_button()
@@ -431,7 +433,8 @@ func _setup_swipe_area() -> void:
 	%Page2.custom_minimum_size.x = page_w
 	_build_page2(page_w)
 	await get_tree().process_frame
-	var page_h: float = %Page1.size.y
+	await get_tree().process_frame
+	var page_h: float = maxf(%Page1.size.y, %Page2.size.y)
 	if page_h <= 0:
 		page_h = %SwipeArea.size.y
 	%SwipeArea.custom_minimum_size.y = page_h
@@ -457,8 +460,8 @@ func _snap_to_page() -> void:
 	var elapsed: float = Time.get_ticks_msec() / 1000.0 - _touch_start_time
 	var manual_vel: float = dx / max(elapsed, 0.05)
 	var velocity := _swipe_velocity if absf(_swipe_velocity) > absf(manual_vel) else manual_vel
-	var fast_flick := absf(velocity) > 300.0
-	var far_enough := absf(dx) > _page_width * 0.25
+	var fast_flick := absf(velocity) > 150.0
+	var far_enough := absf(dx) > _page_width * 0.08
 	if far_enough or fast_flick:
 		var dir := 1 if dx < 0.0 else -1
 		if fast_flick and absf(dx) < 5.0:
@@ -566,20 +569,20 @@ func _build_page2_center_info() -> Control:
 
 	var lbl_title := Label.new()
 	lbl_title.text = "今天是農曆"
-	lbl_title.add_theme_color_override("font_color", Color.WHITE)
+	lbl_title.add_theme_color_override("font_color", GameState.label_color())
 	lbl_title.add_theme_font_size_override("font_size", 24)
 	lbl_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(lbl_title)
 
 	var lbl_date := Label.new()
-	lbl_date.add_theme_color_override("font_color", Color.WHITE)
+	lbl_date.add_theme_color_override("font_color", GameState.label_color())
 	lbl_date.add_theme_font_size_override("font_size", 24)
 	lbl_date.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(lbl_date)
 	_page2_date_label = lbl_date
 
 	var lbl_age := Label.new()
-	lbl_age.add_theme_color_override("font_color", Color.WHITE)
+	lbl_age.add_theme_color_override("font_color", GameState.label_color())
 	lbl_age.add_theme_font_size_override("font_size", 24)
 	lbl_age.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(lbl_age)
