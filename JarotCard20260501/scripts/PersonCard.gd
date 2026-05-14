@@ -21,6 +21,8 @@ var _mouse_pressed: bool = false
 var _swipe_velocity: float = 0.0
 var _touch_start_time: float = 0.0
 var _page2_gender_btn: Button = null
+var _page2_date_label: Label = null
+var _page2_age_label: Label = null
 
 const BTN_HEIGHT := 68
 
@@ -38,6 +40,11 @@ func _ready() -> void:
 	_update_gender_button()
 	_update_cards()
 	_setup_swipe_area()
+	var date_timer := Timer.new()
+	date_timer.wait_time = 30.0
+	date_timer.autostart = true
+	date_timer.timeout.connect(_update_page2_center_date)
+	add_child(date_timer)
 
 # ── 性別 ─────────────────────────────────────────────
 
@@ -47,6 +54,39 @@ func _update_gender_button() -> void:
 	%GenderToggleBtn.text = label
 	if _page2_gender_btn != null:
 		_page2_gender_btn.text = label
+
+func _get_birth_lunar_year() -> int:
+	# 優先從國曆生日換算，確保春節前後邊界正確
+	# 例如：國曆 1990/01/15 → 仍屬己巳年(1989農曆年)，而非1990
+	if _solar_year > 0:
+		var r := LunarCalendar.solar_to_lunar(_solar_year, _solar_month, _solar_day)
+		return r["year"]
+	if _lunar_year > 0:
+		return _lunar_year
+	return -1
+
+func _calc_nominal_age(today_lunar_year: int) -> int:
+	# 虛歲規則：
+	#   出生即為 1 歲，每過一次農曆春節（正月初一）+1
+	#   公式：當前農曆年 - 出生農曆年 + 1
+	#   today_lunar_year 由 solar_to_lunar(today) 取得，已自動判斷今年春節是否已過
+	#   birth_lunar_year 由 solar_to_lunar(birthday) 取得，自動判斷出生時是否已過當年春節
+	var birth_year := _get_birth_lunar_year()
+	if birth_year <= 0:
+		return -1
+	return today_lunar_year - birth_year + 1
+
+func _update_page2_center_date() -> void:
+	var today := Time.get_date_dict_from_system()
+	var lunar := LunarCalendar.solar_to_lunar(today["year"], today["month"], today["day"])
+	if _page2_date_label != null:
+		_page2_date_label.text = "%d年%d月%d號" % [lunar["year"], lunar["month"], lunar["day"]]
+	if _page2_age_label != null:
+		var age := _calc_nominal_age(lunar["year"])
+		_page2_age_label.text = "虛歲 %d 歲" % age if age > 0 else "虛歲 --- 歲"
+
+func _on_today_fortune_pressed() -> void:
+	pass
 
 func _on_gender_toggle_pressed() -> void:
 	var person: Dictionary = GameState.person_list[GameState.current_person_index]
@@ -125,13 +165,13 @@ func _show_picker(mode: String) -> void:
 	var current_idx: int
 	var cols: int
 	match mode:
-		"solar_year":  count = 200; current_idx = _solar_year - 1901; cols = 5
+		"solar_year":  count = 200; current_idx = (_solar_year - 1901) if _solar_year > 0 else (2000 - 1901); cols = 5
 		"solar_month": count = 12;  current_idx = _solar_month - 1;   cols = 6
 		"solar_day":
 			count = _max_solar_day(_solar_year, _solar_month)
 			current_idx = _solar_day - 1
 			cols = 10
-		"lunar_year":  count = 200; current_idx = _lunar_year - 1901; cols = 5
+		"lunar_year":  count = 200; current_idx = (_lunar_year - 1901) if _lunar_year > 0 else (2000 - 1901); cols = 5
 		"lunar_month": count = 12;  current_idx = _lunar_month - 1;   cols = 6
 		"lunar_day":   count = 30;  current_idx = _lunar_day - 1;     cols = 10
 
@@ -142,13 +182,33 @@ func _show_picker(mode: String) -> void:
 	btn_style.set_corner_radius_all(4)
 	btn_style.set_content_margin_all(4)
 
+	var sc := GameState.SELECTED_COLOR
+	var selected_style := StyleBoxFlat.new()
+	selected_style.bg_color = Color(sc.r, sc.g, sc.b, 0.5)
+	selected_style.set_corner_radius_all(4)
+	selected_style.set_content_margin_all(4)
+
+	var has_value: bool
+	match mode:
+		"solar_year":  has_value = _solar_year > 0
+		"solar_month": has_value = _solar_month > 0
+		"solar_day":   has_value = _solar_day > 0
+		"lunar_year":  has_value = _lunar_year > 0
+		"lunar_month": has_value = _lunar_month > 0
+		"lunar_day":   has_value = _lunar_day > 0
+		_:             has_value = false
+
 	for i in range(count):
 		var btn := Button.new()
 		btn.custom_minimum_size = Vector2(0, BTN_HEIGHT)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.add_theme_font_size_override("font_size", 20)
-		btn.add_theme_stylebox_override("normal", btn_style)
-		btn.add_theme_stylebox_override("focus",  btn_style)
+		var is_selected := has_value and i == current_idx
+		var style := selected_style if is_selected else btn_style
+		btn.add_theme_stylebox_override("normal", style)
+		btn.add_theme_stylebox_override("focus",  style)
+		if is_selected:
+			btn.add_theme_color_override("font_color", Color.WHITE)
 		match mode:
 			"solar_year", "lunar_year":     btn.text = str(1901 + i)
 			"solar_month", "lunar_month":   btn.text = str(i + 1) + " 月"
@@ -160,7 +220,10 @@ func _show_picker(mode: String) -> void:
 	%BirthdayOverlay.visible = true
 	await get_tree().process_frame
 	var row := current_idx / cols
-	%PickerScroll.scroll_vertical = row * (BTN_HEIGHT + 4)
+	var row_h := BTN_HEIGHT + 4
+	var scroll_top := row * row_h
+	var center_offset := int(%PickerScroll.size.y / 2.0) - row_h / 2
+	%PickerScroll.scroll_vertical = maxi(0, scroll_top - center_offset)
 
 func _on_picker_selected(idx: int) -> void:
 	match _picker_mode:
@@ -194,6 +257,7 @@ func _on_picker_selected(idx: int) -> void:
 	_save_birthdays()
 	_update_birthday_display()
 	_update_cards()
+	_update_page2_center_date()
 	%BirthdayOverlay.visible = false
 
 func _sync_lunar_from_solar() -> void:
@@ -445,45 +509,33 @@ func _build_page2_center_info() -> Control:
 	var lbl_title := Label.new()
 	lbl_title.text = "今天是農曆"
 	lbl_title.add_theme_color_override("font_color", Color.WHITE)
-	lbl_title.add_theme_font_size_override("font_size", 18)
+	lbl_title.add_theme_font_size_override("font_size", 24)
 	lbl_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(lbl_title)
 
 	var lbl_date := Label.new()
-	lbl_date.text = "%d-%d-%d" % [lunar["year"], lunar["month"], lunar["day"]]
 	lbl_date.add_theme_color_override("font_color", Color.WHITE)
-	lbl_date.add_theme_font_size_override("font_size", 18)
+	lbl_date.add_theme_font_size_override("font_size", 24)
 	lbl_date.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(lbl_date)
+	_page2_date_label = lbl_date
 
 	var lbl_age := Label.new()
-	if _lunar_year > 0:
-		lbl_age.text = "虛歲是%d歲" % (lunar["year"] - _lunar_year + 1)
-	else:
-		lbl_age.text = "虛歲是--歲"
 	lbl_age.add_theme_color_override("font_color", Color.WHITE)
-	lbl_age.add_theme_font_size_override("font_size", 18)
+	lbl_age.add_theme_font_size_override("font_size", 24)
 	lbl_age.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(lbl_age)
+	_page2_age_label = lbl_age
 
-	var gender_row := HBoxContainer.new()
-	gender_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	gender_row.add_theme_constant_override("separation", 6)
-	vbox.add_child(gender_row)
+	_update_page2_center_date()
 
-	var lbl_gender := Label.new()
-	lbl_gender.text = "性別："
-	lbl_gender.add_theme_color_override("font_color", Color.WHITE)
-	lbl_gender.add_theme_font_size_override("font_size", 18)
-	gender_row.add_child(lbl_gender)
-
-	%GenderToggleBtn.visible = false
-	var proxy_btn := Button.new()
-	proxy_btn.text = %GenderToggleBtn.text
-	proxy_btn.add_theme_font_size_override("font_size", 20)
-	proxy_btn.pressed.connect(_on_gender_toggle_pressed)
-	gender_row.add_child(proxy_btn)
-	_page2_gender_btn = proxy_btn
+	var fortune_btn := Button.new()
+	fortune_btn.text = "今日運勢"
+	fortune_btn.add_theme_font_size_override("font_size", 20)
+	fortune_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	fortune_btn.custom_minimum_size = Vector2(150, 0)
+	fortune_btn.pressed.connect(_on_today_fortune_pressed)
+	vbox.add_child(fortune_btn)
 
 	return vbox
 
@@ -504,15 +556,24 @@ func _build_page2(page_w: float) -> void:
 	panel_style.set_corner_radius_all(4)
 	panel_style.set_content_margin_all(4)
 
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 6)
-	margin.add_theme_constant_override("margin_right", 6)
-	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	page2.add_child(margin)
+	# 左右 pad 吸收多餘空間，讓 rows 固定在最小寬度（同 Page1 的 BlueLeftPad/RightPad 做法）
+	var grid_hbox := HBoxContainer.new()
+	grid_hbox.add_theme_constant_override("separation", 0)
+	grid_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	page2.add_child(grid_hbox)
+
+	var grid_left_pad := Control.new()
+	grid_left_pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid_hbox.add_child(grid_left_pad)
 
 	var rows := VBoxContainer.new()
 	rows.add_theme_constant_override("separation", 6)
-	margin.add_child(rows)
+	rows.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	grid_hbox.add_child(rows)
+
+	var grid_right_pad := Control.new()
+	grid_right_pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid_hbox.add_child(grid_right_pad)
 
 	# 第一行：巳午未申
 	var row1 := HBoxContainer.new()
@@ -553,22 +614,35 @@ func _build_page2(page_w: float) -> void:
 	row_spacer.custom_minimum_size = Vector2(0, 12)
 	page2.add_child(row_spacer)
 
-	var bottom_labels := ["十年大運", "流年", "流月", "流日"]
+	# 底部列：同樣用左右 pad 包住
+	var bottom_hbox_outer := HBoxContainer.new()
+	bottom_hbox_outer.add_theme_constant_override("separation", 0)
+	bottom_hbox_outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	page2.add_child(bottom_hbox_outer)
+
+	var bottom_left_pad := Control.new()
+	bottom_left_pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bottom_hbox_outer.add_child(bottom_left_pad)
+
 	var bottom_hbox := HBoxContainer.new()
 	bottom_hbox.add_theme_constant_override("separation", 6)
-	bottom_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	page2.add_child(bottom_hbox)
+	bottom_hbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	bottom_hbox_outer.add_child(bottom_hbox)
 
-	for bl in bottom_labels:
+	var bottom_right_pad := Control.new()
+	bottom_right_pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bottom_hbox_outer.add_child(bottom_right_pad)
+
+	for bl in ["十年大運", "流年", "流月", "流日"]:
 		var panel := PanelContainer.new()
 		panel.add_theme_stylebox_override("panel", panel_style)
-		panel.custom_minimum_size = Vector2(54, 0)
+		panel.custom_minimum_size = Vector2(72, 0)
 		panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var vbox := VBoxContainer.new()
 		vbox.add_theme_constant_override("separation", 2)
 		panel.add_child(vbox)
 		var card := TextureRect.new()
-		card.custom_minimum_size = Vector2(54, 106)
+		card.custom_minimum_size = Vector2(72, 106)
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		card.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
