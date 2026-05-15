@@ -33,8 +33,10 @@ var _prev_drag_y: float = 0.0
 var _prev_drag_time: float = 0.0
 var _inertia_sc: ScrollContainer = null
 var _fortune_layer: int = 1
+var _is_transitioning: bool = false
 var _decade_code: String = ""
 var _decade_start_age: int = 0
+var _decade_label: String = ""
 var _year_code: String = ""
 var _year_display_card: String = ""
 var _year_label: String = ""
@@ -133,7 +135,68 @@ func _update_page2_center_date() -> void:
 		_page2_age_label.text = "虛歲 %d 歲" % age if age > 0 else "虛歲 --- 歲"
 
 func _on_today_fortune_pressed() -> void:
-	pass
+	var today := Time.get_date_dict_from_system()
+	var lunar := LunarCalendar.solar_to_lunar(today["year"], today["month"], today["day"])
+	var age := _calc_nominal_age(lunar["year"])
+	if age <= 0:
+		return
+
+	# 清除舊狀態
+	_decade_code = ""; _decade_start_age = 0; _decade_label = ""
+	_year_code = ""; _year_display_card = ""; _year_label = ""
+	_month_code = ""; _month_display_card = ""; _month_label = ""
+	_day_code = ""; _day_display_card = ""; _day_label = ""
+
+	# 找十年大運格
+	var decade_cfg := _calc_decade_config()
+	for code in decade_cfg:
+		var s: int = decade_cfg[code]["start_age"]
+		if s > 0 and age >= s and age <= s + 9:
+			_decade_code = code
+			_decade_start_age = s
+			_decade_label = decade_cfg[code]["label"]
+			break
+	if _decade_code == "":
+		return
+
+	# 找年運格
+	var year_cfg := _calc_year_config()
+	for code in year_cfg:
+		if year_cfg[code].get("visible", false) and year_cfg[code]["label"] == str(age) + " 歲":
+			_year_code = code
+			_year_display_card = year_cfg[code]["card"]
+			_year_label = year_cfg[code]["label"]
+			break
+	if _year_code == "":
+		return
+
+	# 找月運格
+	var month_cfg := _calc_month_config()
+	for code in month_cfg:
+		if month_cfg[code]["label"] == str(lunar["month"]) + " 月":
+			_month_code = code
+			_month_display_card = month_cfg[code]["card"]
+			_month_label = month_cfg[code]["label"]
+			break
+	if _month_code == "":
+		return
+
+	# 找日運格
+	var day_pos: int = (int(lunar["day"]) - 1) % 12
+	var month_start_idx := _GRID_CLOCKWISE.find(_month_code)
+	var is_male := _get_is_male()
+	var day_cell_idx: int
+	if is_male:
+		day_cell_idx = (month_start_idx + day_pos) % 12
+	else:
+		day_cell_idx = (month_start_idx - day_pos + 120) % 12
+	var day_cfg := _calc_day_config()
+	_day_code = _GRID_CLOCKWISE[day_cell_idx]
+	_day_display_card = day_cfg[_day_code]["card"]
+	_day_label = str(int(lunar["day"])) + " 號"
+
+	_fortune_layer = 5
+	_build_page2(_page_width)
 
 func _on_gender_toggle_pressed() -> void:
 	var person: Dictionary = GameState.person_list[GameState.current_person_index]
@@ -715,7 +778,7 @@ func _calc_decade_config() -> Dictionary:
 		var pos_idx: int = (start_idx + i) % 12 if is_male else (start_idx - i + 120) % 12
 		var code: String = _GRID_CLOCKWISE[pos_idx]
 		var age_start: int = i * 10 + 1
-		config[code] = {"label": "%d~%d歲" % [age_start, age_start + 9], "start_age": age_start}
+		config[code] = {"label": "%d~%d 歲" % [age_start, age_start + 9], "start_age": age_start}
 	return config
 
 func _calc_year_config() -> Dictionary:
@@ -733,7 +796,7 @@ func _calc_year_config() -> Dictionary:
 		var pos_idx: int = (start_idx + i) % 12 if is_male else (start_idx - i + 120) % 12
 		var cell_code: String = _GRID_CLOCKWISE[pos_idx]
 		var card_code: String = _decade_code if i == 9 else cell_code
-		config[cell_code] = {"label": str(_decade_start_age + i) + "歲", "card": card_code, "visible": true}
+		config[cell_code] = {"label": str(_decade_start_age + i) + " 歲", "card": card_code, "visible": true}
 	return config
 
 func _calc_day_config() -> Dictionary:
@@ -765,7 +828,7 @@ func _calc_month_config() -> Dictionary:
 	for i in range(12):
 		var pos_idx: int = (start_idx + i) % 12 if is_male else (start_idx - i + 120) % 12
 		var cell_code: String = _GRID_CLOCKWISE[pos_idx]
-		config[cell_code] = {"label": str(i + 1) + "月", "card": cell_code, "visible": true}
+		config[cell_code] = {"label": str(i + 1) + " 月", "card": cell_code, "visible": true}
 	return config
 
 func _build_fortune_config() -> Dictionary:
@@ -802,8 +865,8 @@ func _build_fortune_config() -> Dictionary:
 func _panel_from_config(code: String, skin: String, style: StyleBoxFlat, cfg: Dictionary) -> PanelContainer:
 	var on_tap := Callable()
 	if _fortune_layer == 1 and cfg.get("start_age", 0) > 0:
-		var c := code; var a: int = cfg["start_age"]
-		on_tap = func(): _enter_year_fortune(c, a)
+		var c := code; var a: int = cfg["start_age"]; var lbl: String = cfg.get("label", "")
+		on_tap = func(): _enter_year_fortune(c, a, lbl)
 	elif _fortune_layer == 2 and cfg.get("visible", true):
 		var c := code
 		var dc: String = cfg.get("card", code)
@@ -829,18 +892,22 @@ func _panel_from_config(code: String, skin: String, style: StyleBoxFlat, cfg: Di
 		card_node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return panel
 
-func _enter_year_fortune(code: String, start_age: int) -> void:
+func _enter_year_fortune(code: String, start_age: int, label: String = "") -> void:
+	if _is_transitioning: return
 	_fortune_layer = 2
 	_decade_code = code
 	_decade_start_age = start_age
+	_decade_label = label
 	_year_code = ""
 	_year_display_card = ""
 	_year_label = ""
 	_build_page2(_page_width)
 
 func _enter_decade_fortune() -> void:
+	if _is_transitioning: return
+	_is_transitioning = true
 	_fortune_layer = 1
-	_decade_code = ""; _decade_start_age = 0
+	_decade_code = ""; _decade_start_age = 0; _decade_label = ""
 	_year_code = ""; _year_display_card = ""; _year_label = ""
 	_month_code = ""; _month_display_card = ""; _month_label = ""
 	_day_code = ""; _day_display_card = ""; _day_label = ""
@@ -848,6 +915,7 @@ func _enter_decade_fortune() -> void:
 	_build_page2(_page_width)
 
 func _enter_month_fortune(cell_code: String, display_card: String, label: String) -> void:
+	if _is_transitioning: return
 	_fortune_layer = 3
 	_year_code = cell_code
 	_year_display_card = display_card
@@ -856,6 +924,8 @@ func _enter_month_fortune(cell_code: String, display_card: String, label: String
 	_build_page2(_page_width)
 
 func _return_to_year_fortune() -> void:
+	if _is_transitioning: return
+	_is_transitioning = true
 	_fortune_layer = 2
 	_year_code = ""; _year_display_card = ""; _year_label = ""
 	_month_code = ""; _month_display_card = ""; _month_label = ""
@@ -864,6 +934,7 @@ func _return_to_year_fortune() -> void:
 	_build_page2(_page_width)
 
 func _enter_day_fortune(cell_code: String, display_card: String, label: String) -> void:
+	if _is_transitioning: return
 	_fortune_layer = 4
 	_month_code = cell_code
 	_month_display_card = display_card
@@ -872,6 +943,8 @@ func _enter_day_fortune(cell_code: String, display_card: String, label: String) 
 	_build_page2(_page_width)
 
 func _return_to_month_fortune() -> void:
+	if _is_transitioning: return
+	_is_transitioning = true
 	_fortune_layer = 3
 	_month_code = ""; _month_display_card = ""; _month_label = ""
 	_day_code = ""; _day_display_card = ""; _day_label = ""
@@ -879,6 +952,7 @@ func _return_to_month_fortune() -> void:
 	_build_page2(_page_width)
 
 func _enter_day_selected(cell_code: String, display_card: String, label: String) -> void:
+	if _is_transitioning: return
 	_fortune_layer = 5
 	_day_code = cell_code
 	_day_display_card = display_card
@@ -886,6 +960,8 @@ func _enter_day_selected(cell_code: String, display_card: String, label: String)
 	_build_page2(_page_width)
 
 func _return_to_day_fortune() -> void:
+	if _is_transitioning: return
+	_is_transitioning = true
 	_fortune_layer = 4
 	_day_code = ""; _day_display_card = ""; _day_label = ""
 	await get_tree().create_timer(0.25).timeout
@@ -986,7 +1062,7 @@ func _build_page2(page_w: float) -> void:
 	bottom_right_pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom_hbox_outer.add_child(bottom_right_pad)
 
-	for bl in ["十年大運", "流年", "流月", "流日"]:
+	for bl in ["十年大運", "年運", "月運", "日運"]:
 		var panel := PanelContainer.new()
 		panel.add_theme_stylebox_override("panel", panel_style)
 		panel.custom_minimum_size = Vector2(72, 0)
@@ -1006,15 +1082,15 @@ func _build_page2(page_w: float) -> void:
 			card.texture = CardCalc.get_card_texture_for_skin(_decade_code, page2_skin)
 			card.modulate.a = 1.0
 			bottom_tap = func(): _enter_decade_fortune()
-		elif bl == "流年" and _fortune_layer >= 3 and _year_code != "":
+		elif bl == "年運" and _fortune_layer >= 3 and _year_code != "":
 			card.texture = CardCalc.get_card_texture_for_skin(_year_display_card, page2_skin)
 			card.modulate.a = 1.0
 			bottom_tap = func(): _return_to_year_fortune()
-		elif bl == "流月" and _fortune_layer >= 4 and _month_code != "":
+		elif bl == "月運" and _fortune_layer >= 4 and _month_code != "":
 			card.texture = CardCalc.get_card_texture_for_skin(_month_display_card, page2_skin)
 			card.modulate.a = 1.0
 			bottom_tap = func(): _return_to_month_fortune()
-		elif bl == "流日" and _fortune_layer >= 5 and _day_code != "":
+		elif bl == "日運" and _fortune_layer >= 5 and _day_code != "":
 			card.texture = CardCalc.get_card_texture_for_skin(_day_display_card, page2_skin)
 			card.modulate.a = 1.0
 			bottom_tap = func(): _return_to_day_fortune()
@@ -1022,7 +1098,16 @@ func _build_page2(page_w: float) -> void:
 			card.texture = CardCalc.get_card_texture_for_skin("BK", page2_skin)
 		vbox.add_child(card)
 		var label := Label.new()
-		label.text = bl
+		if bl == "十年大運" and _decade_label != "":
+			label.text = _decade_label
+		elif bl == "年運" and _year_label != "":
+			label.text = _year_label
+		elif bl == "月運" and _month_label != "":
+			label.text = _month_label
+		elif bl == "日運" and _day_label != "":
+			label.text = _day_label
+		else:
+			label.text = bl
 		label.add_theme_color_override("font_color", Color.WHITE)
 		label.add_theme_font_size_override("font_size", 12)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -1033,6 +1118,7 @@ func _build_page2(page_w: float) -> void:
 	var bottom_pad := Control.new()
 	bottom_pad.custom_minimum_size = Vector2(0, 60)
 	page2.add_child(bottom_pad)
+	_is_transitioning = false
 
 func _fit_center_card(card: TextureRect) -> void:
 	var tex := card.texture
