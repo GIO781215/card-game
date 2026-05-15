@@ -32,8 +32,28 @@ var _scroll_velocity: float = 0.0
 var _prev_drag_y: float = 0.0
 var _prev_drag_time: float = 0.0
 var _inertia_sc: ScrollContainer = null
+var _fortune_layer: int = 1
+var _decade_code: String = ""
+var _decade_start_age: int = 0
+var _year_code: String = ""
+var _year_display_card: String = ""
+var _year_label: String = ""
+var _month_code: String = ""
+var _month_display_card: String = ""
+var _month_label: String = ""
+var _day_code: String = ""
+var _day_display_card: String = ""
+var _day_label: String = ""
 
 const BTN_HEIGHT := 68
+
+# 12宮格順時針順序（從寅出發）
+const _GRID_CLOCKWISE: Array = ["PB","RK","BQ","GG","PK","RQ","BB","GK","PQ","RG","BK","GQ"]
+# 生肖 → 順時針索引
+const _ZODIAC_IDX: Dictionary = {
+	"虎":0,"兔":1,"龍":2,"蛇":3,"馬":4,"羊":5,
+	"猴":6,"雞":7,"狗":8,"豬":9,"鼠":10,"牛":11
+}
 
 func _ready() -> void:
 	GameState.apply_background($BgImage)
@@ -120,6 +140,8 @@ func _on_gender_toggle_pressed() -> void:
 	person["gender"] = "female" if person.get("gender", "male") == "male" else "male"
 	GameState.save_data()
 	_update_gender_button()
+	if _page_width > 0:
+		_build_page2(_page_width)
 
 # ── 生日資料 ──────────────────────────────────────────
 
@@ -285,6 +307,13 @@ func _on_picker_selected(idx: int) -> void:
 	_update_birthday_display()
 	_update_cards()
 	_update_page2_center_date()
+	_fortune_layer = 1
+	_decade_code = ""; _decade_start_age = 0
+	_year_code = ""; _year_display_card = ""; _year_label = ""
+	_month_code = ""; _month_display_card = ""; _month_label = ""
+	_day_code = ""; _day_display_card = ""; _day_label = ""
+	if _page_width > 0:
+		_build_page2(_page_width)
 	%BirthdayOverlay.visible = false
 
 func _sync_lunar_from_solar() -> void:
@@ -545,7 +574,7 @@ func _cancel_card_press() -> void:
 		_card_spring_back.call()
 	_card_spring_back = Callable()
 
-func _attach_card_press_anim(node: Control) -> void:
+func _attach_card_press_anim(node: Control, on_tap: Callable = Callable()) -> void:
 	node.mouse_filter = Control.MOUSE_FILTER_STOP
 	node.resized.connect(func(): node.pivot_offset = node.size / 2.0)
 	var _tween: Tween = null
@@ -587,9 +616,11 @@ func _attach_card_press_anim(node: Control) -> void:
 			_pressed_card = null
 			_card_spring_back = Callable()
 			spring_back.call()
+			if on_tap.is_valid() and not _is_dragging:
+				on_tap.call()
 	)
 
-func _make_page2_panel(code: String, skin: String, style: StyleBoxFlat, lbl: String) -> PanelContainer:
+func _make_page2_panel(code: String, skin: String, style: StyleBoxFlat, lbl: String, card_code: String = "", on_tap: Callable = Callable()) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", style)
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -602,7 +633,8 @@ func _make_page2_panel(code: String, skin: String, style: StyleBoxFlat, lbl: Str
 	card.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	card.mouse_filter = Control.MOUSE_FILTER_STOP
-	card.texture = CardCalc.get_card_texture_for_skin(code, skin)
+	var actual_code := card_code if card_code != "" else code
+	card.texture = CardCalc.get_card_texture_for_skin(actual_code, skin)
 	vbox.add_child(card)
 	var label := Label.new()
 	label.text = lbl
@@ -610,7 +642,7 @@ func _make_page2_panel(code: String, skin: String, style: StyleBoxFlat, lbl: Str
 	label.add_theme_font_size_override("font_size", 13)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(label)
-	_attach_card_press_anim(card)
+	_attach_card_press_anim(card, on_tap)
 	return panel
 
 func _build_page2_center_info() -> Control:
@@ -656,7 +688,211 @@ func _build_page2_center_info() -> Control:
 
 	return vbox
 
+func _get_is_male() -> bool:
+	var person: Dictionary = GameState.person_list[GameState.current_person_index]
+	return person.get("gender", "male") == "male"
+
+func _calc_decade_config() -> Dictionary:
+	# code → {label, start_age}
+	var config: Dictionary = {}
+	if _lunar_year == 0 or _lunar_month == 0:
+		for code in _GRID_CLOCKWISE:
+			config[code] = {"label": "", "start_age": 0}
+		return config
+	var animal := CardCalc.get_chinese_zodiac(_lunar_year)
+	if not _ZODIAC_IDX.has(animal):
+		for code in _GRID_CLOCKWISE:
+			config[code] = {"label": "", "start_age": 0}
+		return config
+	var zodiac_idx: int = _ZODIAC_IDX[animal]
+	var is_male := _get_is_male()
+	var start_idx: int
+	if is_male:
+		start_idx = (zodiac_idx + _lunar_month - 1) % 12
+	else:
+		start_idx = (zodiac_idx - _lunar_month + 1 + 120) % 12
+	for i in range(12):
+		var pos_idx: int = (start_idx + i) % 12 if is_male else (start_idx - i + 120) % 12
+		var code: String = _GRID_CLOCKWISE[pos_idx]
+		var age_start: int = i * 10 + 1
+		config[code] = {"label": "%d~%d歲" % [age_start, age_start + 9], "start_age": age_start}
+	return config
+
+func _calc_year_config() -> Dictionary:
+	# code → {label, card, visible}
+	var config: Dictionary = {}
+	for code in _GRID_CLOCKWISE:
+		config[code] = {"label": "", "card": code, "visible": false}
+	if _decade_code == "" or _decade_start_age == 0:
+		return config
+	var start_idx: int = _GRID_CLOCKWISE.find(_decade_code)
+	if start_idx < 0:
+		return config
+	var is_male := _get_is_male()
+	for i in range(10):
+		var pos_idx: int = (start_idx + i) % 12 if is_male else (start_idx - i + 120) % 12
+		var cell_code: String = _GRID_CLOCKWISE[pos_idx]
+		var card_code: String = _decade_code if i == 9 else cell_code
+		config[cell_code] = {"label": str(_decade_start_age + i) + "歲", "card": card_code, "visible": true}
+	return config
+
+func _calc_day_config() -> Dictionary:
+	var config: Dictionary = {}
+	if _month_code == "":
+		for code in _GRID_CLOCKWISE:
+			config[code] = {"label": "", "card": code, "visible": true}
+		return config
+	var start_idx: int = _GRID_CLOCKWISE.find(_month_code)
+	var is_male := _get_is_male()
+	for i in range(12):
+		var pos_idx: int = (start_idx + i) % 12 if is_male else (start_idx - i + 120) % 12
+		var cell_code: String = _GRID_CLOCKWISE[pos_idx]
+		var d1 := i + 1
+		var d2 := d1 + 12
+		var d3 := d1 + 24
+		var lbl: String = "%d, %d, %d 號" % [d1, d2, d3] if d3 <= 30 else "%d, %d 號" % [d1, d2]
+		config[cell_code] = {"label": lbl, "card": cell_code, "visible": true}
+	return config
+
+func _calc_month_config() -> Dictionary:
+	var config: Dictionary = {}
+	if _year_code == "":
+		for code in _GRID_CLOCKWISE:
+			config[code] = {"label": "", "card": code, "visible": true}
+		return config
+	var start_idx: int = _GRID_CLOCKWISE.find(_year_code)
+	var is_male := _get_is_male()
+	for i in range(12):
+		var pos_idx: int = (start_idx + i) % 12 if is_male else (start_idx - i + 120) % 12
+		var cell_code: String = _GRID_CLOCKWISE[pos_idx]
+		config[cell_code] = {"label": str(i + 1) + "月", "card": cell_code, "visible": true}
+	return config
+
+func _build_fortune_config() -> Dictionary:
+	# Unified: code → {label, card, visible, start_age}
+	if _fortune_layer == 1:
+		var decade := _calc_decade_config()
+		var config: Dictionary = {}
+		for code in decade:
+			config[code] = {"label": decade[code]["label"], "card": code,
+				"visible": true, "start_age": decade[code]["start_age"]}
+		return config
+	elif _fortune_layer == 2:
+		var year := _calc_year_config()
+		var config: Dictionary = {}
+		for code in year:
+			config[code] = {"label": year[code]["label"], "card": year[code]["card"],
+				"visible": year[code]["visible"], "start_age": 0}
+		return config
+	elif _fortune_layer == 3:
+		var month := _calc_month_config()
+		var config: Dictionary = {}
+		for code in month:
+			config[code] = {"label": month[code]["label"], "card": code,
+				"visible": month[code]["visible"], "start_age": 0}
+		return config
+	else:  # layer 4 or 5
+		var day := _calc_day_config()
+		var config: Dictionary = {}
+		for code in day:
+			config[code] = {"label": day[code]["label"], "card": code,
+				"visible": day[code]["visible"], "start_age": 0}
+		return config
+
+func _panel_from_config(code: String, skin: String, style: StyleBoxFlat, cfg: Dictionary) -> PanelContainer:
+	var on_tap := Callable()
+	if _fortune_layer == 1 and cfg.get("start_age", 0) > 0:
+		var c := code; var a: int = cfg["start_age"]
+		on_tap = func(): _enter_year_fortune(c, a)
+	elif _fortune_layer == 2 and cfg.get("visible", true):
+		var c := code
+		var dc: String = cfg.get("card", code)
+		var lbl: String = cfg.get("label", "")
+		on_tap = func(): _enter_month_fortune(c, dc, lbl)
+	elif _fortune_layer == 3 and cfg.get("visible", true):
+		var c := code
+		var dc: String = cfg.get("card", code)
+		var lbl: String = cfg.get("label", "")
+		on_tap = func(): _enter_day_fortune(c, dc, lbl)
+	elif _fortune_layer == 4 and cfg.get("visible", true):
+		var c := code
+		var dc: String = cfg.get("card", code)
+		var lbl: String = cfg.get("label", "")
+		on_tap = func(): _enter_day_selected(c, dc, lbl)
+	var panel := _make_page2_panel(code, skin, style, cfg.get("label", ""), cfg.get("card", code), on_tap)
+	var vbox := panel.get_child(0)
+	var card_node := vbox.get_child(0) as TextureRect
+	if not cfg.get("visible", true):
+		card_node.modulate.a = 0.0
+		(vbox.get_child(1) as Label).text = ""
+	if _fortune_layer == 5:
+		card_node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return panel
+
+func _enter_year_fortune(code: String, start_age: int) -> void:
+	_fortune_layer = 2
+	_decade_code = code
+	_decade_start_age = start_age
+	_year_code = ""
+	_year_display_card = ""
+	_year_label = ""
+	_build_page2(_page_width)
+
+func _enter_decade_fortune() -> void:
+	_fortune_layer = 1
+	_decade_code = ""; _decade_start_age = 0
+	_year_code = ""; _year_display_card = ""; _year_label = ""
+	_month_code = ""; _month_display_card = ""; _month_label = ""
+	_day_code = ""; _day_display_card = ""; _day_label = ""
+	await get_tree().create_timer(0.25).timeout
+	_build_page2(_page_width)
+
+func _enter_month_fortune(cell_code: String, display_card: String, label: String) -> void:
+	_fortune_layer = 3
+	_year_code = cell_code
+	_year_display_card = display_card
+	_year_label = label
+	_month_code = ""; _month_display_card = ""; _month_label = ""
+	_build_page2(_page_width)
+
+func _return_to_year_fortune() -> void:
+	_fortune_layer = 2
+	_year_code = ""; _year_display_card = ""; _year_label = ""
+	_month_code = ""; _month_display_card = ""; _month_label = ""
+	_day_code = ""; _day_display_card = ""; _day_label = ""
+	await get_tree().create_timer(0.25).timeout
+	_build_page2(_page_width)
+
+func _enter_day_fortune(cell_code: String, display_card: String, label: String) -> void:
+	_fortune_layer = 4
+	_month_code = cell_code
+	_month_display_card = display_card
+	_month_label = label
+	_day_code = ""; _day_display_card = ""; _day_label = ""
+	_build_page2(_page_width)
+
+func _return_to_month_fortune() -> void:
+	_fortune_layer = 3
+	_month_code = ""; _month_display_card = ""; _month_label = ""
+	_day_code = ""; _day_display_card = ""; _day_label = ""
+	await get_tree().create_timer(0.25).timeout
+	_build_page2(_page_width)
+
+func _enter_day_selected(cell_code: String, display_card: String, label: String) -> void:
+	_fortune_layer = 5
+	_day_code = cell_code
+	_day_display_card = display_card
+	_day_label = label
+	_build_page2(_page_width)
+
+func _return_to_day_fortune() -> void:
+	_fortune_layer = 4
+	_day_code = ""; _day_display_card = ""; _day_label = ""
+	await get_tree().create_timer(0.25).timeout
+	_build_page2(_page_width)
+
 func _build_page2(page_w: float) -> void:
+	var fortune_config := _build_fortune_config()
 	var page2 := %Page2
 	page2.visible = true
 	for child in page2.get_children():
@@ -697,7 +933,7 @@ func _build_page2(page_w: float) -> void:
 	row1.add_theme_constant_override("separation", 6)
 	rows.add_child(row1)
 	for code in ["GG", "PK", "RQ", "BB"]:
-		row1.add_child(_make_page2_panel(code, page2_skin, panel_style, "1~10歲"))
+		row1.add_child(_panel_from_config(code, page2_skin, panel_style, fortune_config.get(code, {})))
 
 	# 中段：左欄(辰卯) | 中央資訊 | 右欄(酉戌)
 	var mid := HBoxContainer.new()
@@ -708,8 +944,8 @@ func _build_page2(page_w: float) -> void:
 	left_col.add_theme_constant_override("separation", 6)
 	left_col.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	mid.add_child(left_col)
-	left_col.add_child(_make_page2_panel("BQ", page2_skin, panel_style, "1~10歲"))
-	left_col.add_child(_make_page2_panel("RK", page2_skin, panel_style, "1~10歲"))
+	left_col.add_child(_panel_from_config("BQ", page2_skin, panel_style, fortune_config.get("BQ", {})))
+	left_col.add_child(_panel_from_config("RK", page2_skin, panel_style, fortune_config.get("RK", {})))
 
 	mid.add_child(_build_page2_center_info())
 
@@ -717,15 +953,15 @@ func _build_page2(page_w: float) -> void:
 	right_col.add_theme_constant_override("separation", 6)
 	right_col.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	mid.add_child(right_col)
-	right_col.add_child(_make_page2_panel("GK", page2_skin, panel_style, "1~10歲"))
-	right_col.add_child(_make_page2_panel("PQ", page2_skin, panel_style, "1~10歲"))
+	right_col.add_child(_panel_from_config("GK", page2_skin, panel_style, fortune_config.get("GK", {})))
+	right_col.add_child(_panel_from_config("PQ", page2_skin, panel_style, fortune_config.get("PQ", {})))
 
 	# 第四行：寅丑子亥
 	var row4 := HBoxContainer.new()
 	row4.add_theme_constant_override("separation", 6)
 	rows.add_child(row4)
 	for code in ["PB", "GQ", "BK", "RG"]:
-		row4.add_child(_make_page2_panel(code, page2_skin, panel_style, "1~10歲"))
+		row4.add_child(_panel_from_config(code, page2_skin, panel_style, fortune_config.get(code, {})))
 
 	var row_spacer := Control.new()
 	row_spacer.custom_minimum_size = Vector2(0, 12)
@@ -764,7 +1000,26 @@ func _build_page2(page_w: float) -> void:
 		card.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		card.mouse_filter = Control.MOUSE_FILTER_STOP
-		card.texture = CardCalc.get_card_texture_for_skin("BK", page2_skin)
+		card.modulate.a = 0.0
+		var bottom_tap := Callable()
+		if bl == "十年大運" and _fortune_layer >= 2 and _decade_code != "":
+			card.texture = CardCalc.get_card_texture_for_skin(_decade_code, page2_skin)
+			card.modulate.a = 1.0
+			bottom_tap = func(): _enter_decade_fortune()
+		elif bl == "流年" and _fortune_layer >= 3 and _year_code != "":
+			card.texture = CardCalc.get_card_texture_for_skin(_year_display_card, page2_skin)
+			card.modulate.a = 1.0
+			bottom_tap = func(): _return_to_year_fortune()
+		elif bl == "流月" and _fortune_layer >= 4 and _month_code != "":
+			card.texture = CardCalc.get_card_texture_for_skin(_month_display_card, page2_skin)
+			card.modulate.a = 1.0
+			bottom_tap = func(): _return_to_month_fortune()
+		elif bl == "流日" and _fortune_layer >= 5 and _day_code != "":
+			card.texture = CardCalc.get_card_texture_for_skin(_day_display_card, page2_skin)
+			card.modulate.a = 1.0
+			bottom_tap = func(): _return_to_day_fortune()
+		else:
+			card.texture = CardCalc.get_card_texture_for_skin("BK", page2_skin)
 		vbox.add_child(card)
 		var label := Label.new()
 		label.text = bl
@@ -772,7 +1027,7 @@ func _build_page2(page_w: float) -> void:
 		label.add_theme_font_size_override("font_size", 12)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(label)
-		_attach_card_press_anim(card)
+		_attach_card_press_anim(card, bottom_tap)
 		bottom_hbox.add_child(panel)
 
 	var bottom_pad := Control.new()
