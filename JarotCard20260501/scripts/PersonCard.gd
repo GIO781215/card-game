@@ -324,7 +324,7 @@ func _show_picker(mode: String) -> void:
 		var style := selected_style if is_selected else btn_style
 		btn.add_theme_stylebox_override("normal",  style)
 		btn.add_theme_stylebox_override("focus",   style)
-		btn.add_theme_stylebox_override("hover",   press_style)
+		btn.add_theme_stylebox_override("hover",   style)
 		btn.add_theme_stylebox_override("pressed", press_style)
 		if is_selected:
 			btn.add_theme_color_override("font_color", Color.WHITE)
@@ -470,6 +470,11 @@ func _input(event: InputEvent) -> void:
 					_go_to_page(_card_page)
 				get_viewport().set_input_as_handled()
 			elif _is_dragging:
+				if %BirthdayOverlay.visible:
+					for child in %PickerList.get_children():
+						if child is BaseButton:
+							(child as BaseButton).notification(Control.NOTIFICATION_MOUSE_EXIT_SELF)
+							(child as BaseButton).release_focus()
 				get_viewport().set_input_as_handled()
 
 	elif event is InputEventMouseButton:
@@ -501,6 +506,11 @@ func _input(event: InputEvent) -> void:
 						_go_to_page(_card_page)
 					get_viewport().set_input_as_handled()
 				elif _is_dragging:
+					if %BirthdayOverlay.visible:
+						for child in %PickerList.get_children():
+							if child is BaseButton:
+								(child as BaseButton).notification(Control.NOTIFICATION_MOUSE_EXIT_SELF)
+								(child as BaseButton).release_focus()
 					get_viewport().set_input_as_handled()
 
 	elif event is InputEventMouseMotion and _mouse_pressed:
@@ -754,9 +764,9 @@ func _build_page2_center_info() -> Control:
 
 	var fortune_btn := Button.new()
 	fortune_btn.text = "今日運勢"
-	fortune_btn.add_theme_font_size_override("font_size", 20)
+	fortune_btn.add_theme_font_size_override("font_size", 22)
 	fortune_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	fortune_btn.custom_minimum_size = Vector2(150, 0)
+	fortune_btn.custom_minimum_size = Vector2(150, 48)
 	fortune_btn.pressed.connect(_on_today_fortune_pressed)
 	vbox.add_child(fortune_btn)
 
