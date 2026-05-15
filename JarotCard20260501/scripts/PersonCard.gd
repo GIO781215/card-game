@@ -28,6 +28,10 @@ var _pressed_card: Control = null
 var _card_spring_back: Callable = Callable()
 var _page2_date_label: Label = null
 var _page2_age_label: Label = null
+var _scroll_velocity: float = 0.0
+var _prev_drag_y: float = 0.0
+var _prev_drag_time: float = 0.0
+var _inertia_sc: ScrollContainer = null
 
 const BTN_HEIGHT := 68
 
@@ -52,6 +56,22 @@ func _ready() -> void:
 	date_timer.autostart = true
 	date_timer.timeout.connect(_update_page2_center_date)
 	add_child(date_timer)
+
+func _process(delta: float) -> void:
+	if _inertia_sc == null or absf(_scroll_velocity) < 30.0:
+		_scroll_velocity = 0.0
+		_inertia_sc = null
+		return
+	_inertia_sc.scroll_vertical += int(_scroll_velocity * delta)
+	_scroll_velocity *= pow(0.1, delta)
+
+func _track_scroll_velocity(y: float) -> void:
+	var now := Time.get_ticks_msec() / 1000.0
+	var dt := now - _prev_drag_time
+	if dt > 0.005:
+		_scroll_velocity = lerpf(_scroll_velocity, (_prev_drag_y - y) / dt, 0.5)
+		_prev_drag_y = y
+		_prev_drag_time = now
 
 # ── 性別 ─────────────────────────────────────────────
 
@@ -337,6 +357,10 @@ func _input(event: InputEvent) -> void:
 			_swipe_velocity = 0.0
 			_peak_swipe_dx = 0.0
 			_last_drag_x = 0.0
+			_scroll_velocity = 0.0
+			_inertia_sc = null
+			_prev_drag_y = event.position.y
+			_prev_drag_time = Time.get_ticks_msec() / 1000.0
 		else:
 			if _is_h_swiping:
 				var travel: float = _last_drag_x - _swipe_commit_x
@@ -363,6 +387,10 @@ func _input(event: InputEvent) -> void:
 				_is_dragging = false
 				_is_h_swiping = false
 				_swipe_determined = false
+				_scroll_velocity = 0.0
+				_inertia_sc = null
+				_prev_drag_y = mb.position.y
+				_prev_drag_time = Time.get_ticks_msec() / 1000.0
 			else:
 				_mouse_pressed = false
 				if _is_h_swiping:
@@ -384,6 +412,8 @@ func _input(event: InputEvent) -> void:
 				_is_dragging = true
 			if _is_dragging:
 				%PickerScroll.scroll_vertical = _scroll_start + int(_touch_start_y - mm.position.y)
+				_track_scroll_velocity(mm.position.y)
+				_inertia_sc = %PickerScroll
 				get_viewport().set_input_as_handled()
 		else:
 			var dx: float = mm.position.x - _touch_start_x
@@ -405,6 +435,8 @@ func _input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 			elif _is_dragging:
 				sc.scroll_vertical = _scroll_start + int(_touch_start_y - mm.position.y)
+				_track_scroll_velocity(mm.position.y)
+				_inertia_sc = sc
 				get_viewport().set_input_as_handled()
 
 	elif event is InputEventScreenDrag:
@@ -414,6 +446,8 @@ func _input(event: InputEvent) -> void:
 				_is_dragging = true
 			if _is_dragging:
 				%PickerScroll.scroll_vertical = _scroll_start + int(_touch_start_y - event.position.y)
+				_track_scroll_velocity(event.position.y)
+				_inertia_sc = %PickerScroll
 				get_viewport().set_input_as_handled()
 			return
 
@@ -438,6 +472,8 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif _is_dragging:
 			sc.scroll_vertical = _scroll_start + int(_touch_start_y - event.position.y)
+			_track_scroll_velocity(event.position.y)
+			_inertia_sc = sc
 			get_viewport().set_input_as_handled()
 
 # ── 分頁滑動 ──────────────────────────────────────────

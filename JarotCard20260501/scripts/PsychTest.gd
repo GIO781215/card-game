@@ -74,6 +74,9 @@ var _touch_start_y: float = 0.0
 var _scroll_start: int = 0
 var _is_dragging: bool = false
 var _mouse_pressed: bool = false
+var _scroll_velocity: float = 0.0
+var _prev_drag_y: float = 0.0
+var _prev_drag_time: float = 0.0
 
 func _ready() -> void:
 	GameState.apply_background($BgImage)
@@ -188,6 +191,14 @@ func _build_page(page_idx: int) -> void:
 
 	vbox.add_child(nav_row)
 
+func _process(delta: float) -> void:
+	var sc: ScrollContainer = %ScrollContainer
+	if absf(_scroll_velocity) < 30.0:
+		_scroll_velocity = 0.0
+		return
+	sc.scroll_vertical += int(_scroll_velocity * delta)
+	_scroll_velocity *= pow(0.1, delta)
+
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
@@ -198,6 +209,9 @@ func _input(event: InputEvent) -> void:
 			_touch_start_y = event.position.y
 			_scroll_start = sc.scroll_vertical
 			_is_dragging = false
+			_scroll_velocity = 0.0
+			_prev_drag_y = event.position.y
+			_prev_drag_time = Time.get_ticks_msec() / 1000.0
 		else:
 			if _is_dragging:
 				get_viewport().set_input_as_handled()
@@ -206,6 +220,12 @@ func _input(event: InputEvent) -> void:
 			_is_dragging = true
 		if _is_dragging:
 			sc.scroll_vertical = _scroll_start + int(_touch_start_y - event.position.y)
+			var now := Time.get_ticks_msec() / 1000.0
+			var dt := now - _prev_drag_time
+			if dt > 0.005:
+				_scroll_velocity = lerpf(_scroll_velocity, (_prev_drag_y - event.position.y) / dt, 0.5)
+				_prev_drag_y = event.position.y
+				_prev_drag_time = now
 			get_viewport().set_input_as_handled()
 	elif event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
@@ -215,6 +235,9 @@ func _input(event: InputEvent) -> void:
 				_touch_start_y = mb.position.y
 				_scroll_start = sc.scroll_vertical
 				_is_dragging = false
+				_scroll_velocity = 0.0
+				_prev_drag_y = mb.position.y
+				_prev_drag_time = Time.get_ticks_msec() / 1000.0
 			else:
 				_mouse_pressed = false
 				if _is_dragging:
@@ -225,4 +248,10 @@ func _input(event: InputEvent) -> void:
 			_is_dragging = true
 		if _is_dragging:
 			sc.scroll_vertical = _scroll_start + int(_touch_start_y - mm.position.y)
+			var now := Time.get_ticks_msec() / 1000.0
+			var dt := now - _prev_drag_time
+			if dt > 0.005:
+				_scroll_velocity = lerpf(_scroll_velocity, (_prev_drag_y - mm.position.y) / dt, 0.5)
+				_prev_drag_y = mm.position.y
+				_prev_drag_time = now
 			get_viewport().set_input_as_handled()
