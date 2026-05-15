@@ -92,3 +92,17 @@ func label_color() -> Color:
 
 func apply_label_color(label: Label) -> void:
 	label.add_theme_color_override("font_color", label_color())
+
+static func release_buttons_outside(root: Node, press_pos: Vector2, drag_pos: Vector2) -> void:
+	# 找出初始按壓位置在其範圍內、但目前拖曳位置已離開的按鈕，強制送出 MOUSE_EXIT_SELF 讓它立即回彈
+	var stack: Array[Node] = [root]
+	while stack.size() > 0:
+		var node: Node = stack.pop_back()
+		if node is BaseButton:
+			var btn := node as BaseButton
+			if btn.is_visible_in_tree():
+				var rect: Rect2 = btn.get_global_rect()
+				if rect.has_point(press_pos) and not rect.has_point(drag_pos):
+					btn.notification(Control.NOTIFICATION_MOUSE_EXIT_SELF)
+					btn.release_focus()
+		stack.append_array(node.get_children())

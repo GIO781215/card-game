@@ -2,6 +2,7 @@ extends Control
 
 var _long_press_timer: Timer
 var _touch_start_y: float = 0.0
+var _touch_start_x: float = 0.0
 var _scroll_start: int = 0
 var _long_press_index: int = -1
 var _is_long_press: bool = false
@@ -147,6 +148,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			_touch_start_y = event.position.y
+			_touch_start_x = event.position.x
 			_scroll_start = sc.scroll_vertical
 			_is_dragging = false
 			_scroll_velocity = 0.0
@@ -156,6 +158,8 @@ func _input(event: InputEvent) -> void:
 			if _is_dragging:
 				get_viewport().set_input_as_handled()
 	elif event is InputEventScreenDrag:
+		if not _is_dragging:
+			GameState.release_buttons_outside(self, Vector2(_touch_start_x, _touch_start_y), event.position)
 		var dist := absf(event.position.y - _touch_start_y)
 		if dist > 8.0:
 			_is_dragging = true

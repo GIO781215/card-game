@@ -129,7 +129,7 @@ func _update_page2_center_date() -> void:
 	var today := Time.get_date_dict_from_system()
 	var lunar := LunarCalendar.solar_to_lunar(today["year"], today["month"], today["day"])
 	if _page2_date_label != null:
-		_page2_date_label.text = "%d年%d月%d號" % [lunar["year"], lunar["month"], lunar["day"]]
+		_page2_date_label.text = "%d年 %d月 %d號" % [lunar["year"], lunar["month"], lunar["day"]]
 	if _page2_age_label != null:
 		var age := _calc_nominal_age(lunar["year"])
 		_page2_age_label.text = "虛歲 %d 歲" % age if age > 0 else "虛歲 --- 歲"
@@ -300,6 +300,11 @@ func _show_picker(mode: String) -> void:
 	selected_style.set_corner_radius_all(4)
 	selected_style.set_content_margin_all(4)
 
+	var press_style := StyleBoxFlat.new()
+	press_style.bg_color = Color(sc.r, sc.g, sc.b, 0.25)
+	press_style.set_corner_radius_all(4)
+	press_style.set_content_margin_all(4)
+
 	var has_value: bool
 	match mode:
 		"solar_year":  has_value = _solar_year > 0
@@ -317,8 +322,10 @@ func _show_picker(mode: String) -> void:
 		btn.add_theme_font_size_override("font_size", 20)
 		var is_selected := has_value and i == current_idx
 		var style := selected_style if is_selected else btn_style
-		btn.add_theme_stylebox_override("normal", style)
-		btn.add_theme_stylebox_override("focus",  style)
+		btn.add_theme_stylebox_override("normal",  style)
+		btn.add_theme_stylebox_override("focus",   style)
+		btn.add_theme_stylebox_override("hover",   press_style)
+		btn.add_theme_stylebox_override("pressed", press_style)
 		if is_selected:
 			btn.add_theme_color_override("font_color", Color.WHITE)
 		match mode:
@@ -498,6 +505,8 @@ func _input(event: InputEvent) -> void:
 
 	elif event is InputEventMouseMotion and _mouse_pressed:
 		var mm := event as InputEventMouseMotion
+		if not _swipe_determined:
+			GameState.release_buttons_outside(self, Vector2(_touch_start_x, _touch_start_y), mm.position)
 		if %BirthdayOverlay.visible:
 			var dist := absf(mm.position.y - _touch_start_y)
 			if dist > 8.0:
@@ -532,6 +541,8 @@ func _input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 
 	elif event is InputEventScreenDrag:
+		if not _swipe_determined:
+			GameState.release_buttons_outside(self, Vector2(_touch_start_x, _touch_start_y), event.position)
 		if %BirthdayOverlay.visible:
 			var dist := absf(event.position.y - _touch_start_y)
 			if dist > 8.0:
@@ -637,7 +648,7 @@ func _cancel_card_press() -> void:
 		_card_spring_back.call()
 	_card_spring_back = Callable()
 
-func _attach_card_press_anim(node: Control, on_tap: Callable = Callable()) -> void:
+func _attach_card_press_anim(node: Control, on_tap: Callable = Callable(), spring_duration: float = 0.45) -> void:
 	node.mouse_filter = Control.MOUSE_FILTER_STOP
 	node.resized.connect(func(): node.pivot_offset = node.size / 2.0)
 	var _tween: Tween = null
@@ -648,7 +659,7 @@ func _attach_card_press_anim(node: Control, on_tap: Callable = Callable()) -> vo
 		if _tween:
 			_tween.kill()
 		_tween = node.create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SPRING)
-		_tween.tween_property(node, "scale", Vector2(1.0, 1.0), 0.45)
+		_tween.tween_property(node, "scale", Vector2(1.0, 1.0), spring_duration)
 
 	node.mouse_exited.connect(func():
 		if _is_pressed:
@@ -927,7 +938,7 @@ func _enter_decade_fortune() -> void:
 	_year_code = ""; _year_display_card = ""; _year_label = ""
 	_month_code = ""; _month_display_card = ""; _month_label = ""
 	_day_code = ""; _day_display_card = ""; _day_label = ""
-	await get_tree().create_timer(0.25).timeout
+	await get_tree().create_timer(0.08).timeout
 	_build_page2(_page_width)
 
 func _enter_month_fortune(cell_code: String, display_card: String, label: String) -> void:
@@ -946,7 +957,7 @@ func _return_to_year_fortune() -> void:
 	_year_code = ""; _year_display_card = ""; _year_label = ""
 	_month_code = ""; _month_display_card = ""; _month_label = ""
 	_day_code = ""; _day_display_card = ""; _day_label = ""
-	await get_tree().create_timer(0.25).timeout
+	await get_tree().create_timer(0.08).timeout
 	_build_page2(_page_width)
 
 func _enter_day_fortune(cell_code: String, display_card: String, label: String) -> void:
@@ -964,7 +975,7 @@ func _return_to_month_fortune() -> void:
 	_fortune_layer = 3
 	_month_code = ""; _month_display_card = ""; _month_label = ""
 	_day_code = ""; _day_display_card = ""; _day_label = ""
-	await get_tree().create_timer(0.25).timeout
+	await get_tree().create_timer(0.08).timeout
 	_build_page2(_page_width)
 
 func _enter_day_selected(cell_code: String, display_card: String, label: String) -> void:
@@ -980,7 +991,7 @@ func _return_to_day_fortune() -> void:
 	_is_transitioning = true
 	_fortune_layer = 4
 	_day_code = ""; _day_display_card = ""; _day_label = ""
-	await get_tree().create_timer(0.25).timeout
+	await get_tree().create_timer(0.08).timeout
 	_build_page2(_page_width)
 
 func _build_page2(page_w: float) -> void:
@@ -1128,7 +1139,7 @@ func _build_page2(page_w: float) -> void:
 		label.add_theme_font_size_override("font_size", 12)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(label)
-		_attach_card_press_anim(card, bottom_tap)
+		_attach_card_press_anim(card, bottom_tap, 0.08)
 		bottom_hbox.add_child(panel)
 
 	var bottom_pad := Control.new()

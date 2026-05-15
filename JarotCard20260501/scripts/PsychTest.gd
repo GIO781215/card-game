@@ -71,6 +71,7 @@ var _current_page: int = 0
 var _answers: Array = []
 
 var _touch_start_y: float = 0.0
+var _touch_start_x: float = 0.0
 var _scroll_start: int = 0
 var _is_dragging: bool = false
 var _mouse_pressed: bool = false
@@ -207,6 +208,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			_touch_start_y = event.position.y
+			_touch_start_x = event.position.x
 			_scroll_start = sc.scroll_vertical
 			_is_dragging = false
 			_scroll_velocity = 0.0
@@ -216,6 +218,8 @@ func _input(event: InputEvent) -> void:
 			if _is_dragging:
 				get_viewport().set_input_as_handled()
 	elif event is InputEventScreenDrag:
+		if not _is_dragging:
+			GameState.release_buttons_outside(self, Vector2(_touch_start_x, _touch_start_y), event.position)
 		if absf(event.position.y - _touch_start_y) > 8.0:
 			_is_dragging = true
 		if _is_dragging:
@@ -233,6 +237,7 @@ func _input(event: InputEvent) -> void:
 			if mb.pressed:
 				_mouse_pressed = true
 				_touch_start_y = mb.position.y
+				_touch_start_x = mb.position.x
 				_scroll_start = sc.scroll_vertical
 				_is_dragging = false
 				_scroll_velocity = 0.0
@@ -244,6 +249,8 @@ func _input(event: InputEvent) -> void:
 					get_viewport().set_input_as_handled()
 	elif event is InputEventMouseMotion and _mouse_pressed:
 		var mm := event as InputEventMouseMotion
+		if not _is_dragging:
+			GameState.release_buttons_outside(self, Vector2(_touch_start_x, _touch_start_y), mm.position)
 		if absf(mm.position.y - _touch_start_y) > 8.0:
 			_is_dragging = true
 		if _is_dragging:
