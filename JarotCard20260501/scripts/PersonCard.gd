@@ -20,6 +20,9 @@ var _page_width: float = 0.0
 var _mouse_pressed: bool = false
 var _swipe_velocity: float = 0.0
 var _touch_start_time: float = 0.0
+var _peak_swipe_dx: float = 0.0
+var _swipe_commit_x: float = 0.0
+var _last_drag_x: float = 0.0
 var _page2_gender_btn: Button = null
 var _pressed_card: Control = null
 var _card_spring_back: Callable = Callable()
@@ -332,9 +335,16 @@ func _input(event: InputEvent) -> void:
 			_is_h_swiping = false
 			_swipe_determined = false
 			_swipe_velocity = 0.0
+			_peak_swipe_dx = 0.0
+			_last_drag_x = 0.0
 		else:
 			if _is_h_swiping:
-				_snap_to_page()
+				var travel: float = _last_drag_x - _swipe_commit_x
+				if absf(travel) >= 22.0:
+					var dir := 1 if travel < 0.0 else -1
+					_go_to_page(clampi(_card_page + dir, 0, 1))
+				else:
+					_go_to_page(_card_page)
 				get_viewport().set_input_as_handled()
 			elif _is_dragging:
 				get_viewport().set_input_as_handled()
@@ -356,7 +366,12 @@ func _input(event: InputEvent) -> void:
 			else:
 				_mouse_pressed = false
 				if _is_h_swiping:
-					_snap_to_page()
+					var travel: float = _last_drag_x - _swipe_commit_x
+					if absf(travel) >= 22.0:
+						var dir := 1 if travel < 0.0 else -1
+						_go_to_page(clampi(_card_page + dir, 0, 1))
+					else:
+						_go_to_page(_card_page)
 					get_viewport().set_input_as_handled()
 				elif _is_dragging:
 					get_viewport().set_input_as_handled()
@@ -374,13 +389,16 @@ func _input(event: InputEvent) -> void:
 			var dx: float = mm.position.x - _touch_start_x
 			var dy: float = mm.position.y - _touch_start_y
 			if not _swipe_determined:
-				if absf(dx) > 12.0 or absf(dy) > 8.0:
+				if absf(dx) > 2.0 or absf(dy) > 2.0:
 					_swipe_determined = true
 					_cancel_card_press()
 					_is_h_swiping = absf(dx) > absf(dy)
-					if not _is_h_swiping:
+					if _is_h_swiping:
+						_swipe_commit_x = mm.position.x
+					else:
 						_is_dragging = true
 			if _is_h_swiping:
+				_last_drag_x = mm.position.x
 				if _page_width > 0:
 					var base_x := -_card_page * _page_width
 					%CardsHBox.position.x = base_x + dx
@@ -403,19 +421,20 @@ func _input(event: InputEvent) -> void:
 		var dy: float = event.position.y - _touch_start_y
 
 		if not _swipe_determined:
-			if absf(dx) > 12.0 or absf(dy) > 8.0:
+			if absf(dx) > 2.0 or absf(dy) > 2.0:
 				_swipe_determined = true
 				_cancel_card_press()
 				_is_h_swiping = absf(dx) > absf(dy)
-				if not _is_h_swiping:
+				if _is_h_swiping:
+					_swipe_commit_x = event.position.x
+				else:
 					_is_dragging = true
 
 		if _is_h_swiping:
+			_last_drag_x = event.position.x
 			if _page_width > 0:
 				var base_x := -_card_page * _page_width
 				%CardsHBox.position.x = base_x + dx
-			var drag_evt := event as InputEventScreenDrag
-			_swipe_velocity = drag_evt.velocity.x
 			get_viewport().set_input_as_handled()
 		elif _is_dragging:
 			sc.scroll_vertical = _scroll_start + int(_touch_start_y - event.position.y)
@@ -457,19 +476,20 @@ func _snap_to_page() -> void:
 	if _page_width <= 0:
 		return
 	var dx: float = %CardsHBox.position.x - (-_card_page * _page_width)
+	# 用滑動過程中的峰值位移判斷，避免 Android 放手前最後一個 drag 事件回縮導致誤判
+	var peak := _peak_swipe_dx if absf(_peak_swipe_dx) > absf(dx) else dx
 	var elapsed: float = Time.get_ticks_msec() / 1000.0 - _touch_start_time
-	var manual_vel: float = dx / max(elapsed, 0.05)
+	var manual_vel: float = peak / max(elapsed, 0.05)
 	var velocity := _swipe_velocity if absf(_swipe_velocity) > absf(manual_vel) else manual_vel
-	var fast_flick := absf(velocity) > 150.0
-	var far_enough := absf(dx) > _page_width * 0.08
+	var fast_flick := absf(velocity) > 50.0
+	var far_enough := absf(peak) > 12.0
 	if far_enough or fast_flick:
-		var dir := 1 if dx < 0.0 else -1
-		if fast_flick and absf(dx) < 5.0:
-			dir = 1 if velocity < 0.0 else -1
+		var dir := 1 if peak < 0.0 else -1
 		_go_to_page(clampi(_card_page + dir, 0, 1))
 	else:
 		_go_to_page(_card_page)
 	_swipe_velocity = 0.0
+	_peak_swipe_dx = 0.0
 
 func _make_indicator_style(active: bool) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
