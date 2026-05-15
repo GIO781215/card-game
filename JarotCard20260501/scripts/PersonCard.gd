@@ -799,12 +799,28 @@ func _calc_year_config() -> Dictionary:
 		config[cell_code] = {"label": str(_decade_start_age + i) + " 歲", "card": card_code, "visible": true}
 	return config
 
+func _get_lunar_month_days(lunar_year: int, lunar_month: int) -> int:
+	var r := LunarCalendar.lunar_to_solar(lunar_year, lunar_month, 30)
+	var check := LunarCalendar.solar_to_lunar(int(r["year"]), int(r["month"]), int(r["day"]))
+	return 30 if int(check["day"]) == 30 and int(check["month"]) == lunar_month else 29
+
 func _calc_day_config() -> Dictionary:
 	var config: Dictionary = {}
 	if _month_code == "":
 		for code in _GRID_CLOCKWISE:
 			config[code] = {"label": "", "card": code, "visible": true}
 		return config
+
+	# 推算流月對應的實際農曆年月，判斷大月或小月
+	var month_days := 30
+	var age_str := _year_label.replace(" 歲", "").strip_edges()
+	var month_str := _month_label.replace(" 月", "").strip_edges()
+	if age_str.is_valid_int() and month_str.is_valid_int():
+		var birth_year := _get_birth_lunar_year()
+		if birth_year > 0:
+			var fortune_year := birth_year + age_str.to_int() - 1
+			month_days = _get_lunar_month_days(fortune_year, month_str.to_int())
+
 	var start_idx: int = _GRID_CLOCKWISE.find(_month_code)
 	var is_male := _get_is_male()
 	for i in range(12):
@@ -813,7 +829,7 @@ func _calc_day_config() -> Dictionary:
 		var d1 := i + 1
 		var d2 := d1 + 12
 		var d3 := d1 + 24
-		var lbl: String = "%d, %d, %d 號" % [d1, d2, d3] if d3 <= 30 else "%d, %d 號" % [d1, d2]
+		var lbl: String = "%d, %d, %d 號" % [d1, d2, d3] if d3 <= month_days else "%d, %d 號" % [d1, d2]
 		config[cell_code] = {"label": lbl, "card": cell_code, "visible": true}
 	return config
 
